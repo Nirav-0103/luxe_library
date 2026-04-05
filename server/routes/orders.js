@@ -300,10 +300,10 @@ router.post('/', protect, async (req, res) => {
       await user.save();
     }
 
-    // Send confirmation email
-    try {
-      if (user) await sendOrderConfirmation(user, order);
-    } catch (e) { console.log('Email skipped:', e.message); }
+    // Send confirmation email in background to prevent slow COD checkout
+    if (user) {
+      sendOrderConfirmation(user, order).catch(e => console.log('Email skipped:', e.message));
+    }
 
     const io = req.app.get('io');
     if (io) io.emit('new_order');

@@ -162,7 +162,7 @@ export default function CategoryPage() {
                     {/* Book Cover */}
                     <div className="book-card__cover" style={{ background: `linear-gradient(145deg, ${c1}, ${c2})` }}>
                       {book.coverImage
-                        ? <img src={book.coverImage} alt={book.title} className="book-card__cover-img" />
+                        ? <img src={book.coverImage} alt={book.title} className="book-card__cover-img" loading="lazy" />
                         : (
                           <div className="book-card__cover-text">
                             <span className="book-card__cover-title">{book.title}</span>

@@ -14,6 +14,11 @@ function getRazorpay() {
   });
 }
 
+// ── GET /payment/razorpay-key  — Get Razorpay Key for Frontend ───────────────
+router.get('/razorpay-key', protect, (req, res) => {
+  res.json({ success: true, key: process.env.RAZORPAY_KEY_ID });
+});
+
 // ── POST /payment/razorpay-order  — create Razorpay order ───────────────────
 router.post('/razorpay-order', protect, async (req, res) => {
   try {

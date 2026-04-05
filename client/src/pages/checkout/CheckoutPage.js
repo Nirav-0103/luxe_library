@@ -5,7 +5,7 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { createOrderAPI, getSavedAddressesAPI, saveAddressAPI, createRazorpayOrderAPI, verifyRazorpayPaymentAPI } from '../../api';
+import { createOrderAPI, getSavedAddressesAPI, saveAddressAPI, createRazorpayOrderAPI, verifyRazorpayPaymentAPI, getRazorpayKeyAPI } from '../../api';
 import './CheckoutPage.css';
 
 export default function CheckoutPage() {
@@ -141,8 +141,9 @@ export default function CheckoutPage() {
       const rzpOrder = rzpRes.data.order;
 
       // Step 2: Open Razorpay popup
+      const { data: keyData } = await getRazorpayKeyAPI();
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY,
+        key: keyData.key,
         amount: rzpOrder.amount,
         currency: rzpOrder.currency,
         name: 'Luxe Library',

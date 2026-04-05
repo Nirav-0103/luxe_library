@@ -204,7 +204,7 @@ export default function HomePage() {
                     border: '1px solid var(--border-color2)', transition: '0.3s',
                     width: 180, flexShrink: 0  // Fixed width for smooth sliding
                   }} onMouseOver={(e)=>e.currentTarget.style.borderColor='var(--gold)'} onMouseOut={(e)=>e.currentTarget.style.borderColor='var(--border-color2)'}>
-                    <img src={rb.coverImage} alt={rb.title} style={{ width: '100%', height: 220, objectFit: 'cover', borderRadius: 8, marginBottom: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    <img src={rb.coverImage} alt={rb.title} loading="lazy" style={{ width: '100%', height: 220, objectFit: 'cover', borderRadius: 8, marginBottom: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                     <h4 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal' }}>{rb.title}</h4>
                     <p style={{ fontSize: 13, color: 'var(--gold)', marginTop: 4 }}>{rb.author}</p>
                   </div>

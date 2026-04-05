@@ -82,6 +82,7 @@ export const getOrderStatsAPI = () => API.get('/orders/admin/stats');
 export const downloadOrdersCSVAPI = (params) => API.get('/orders/admin/export/csv', { params, responseType: 'blob' });
 
 // Payment (Razorpay)
+export const getRazorpayKeyAPI        = () => API.get('/payment/razorpay-key');
 export const createRazorpayOrderAPI  = (data) => API.post('/payment/razorpay-order', data);
 export const verifyRazorpayPaymentAPI = (data) => API.post('/payment/verify', data);
 export const initiateRefundAPI       = (data) => API.post('/payment/refund', data);
