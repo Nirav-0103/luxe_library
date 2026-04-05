@@ -26,7 +26,8 @@ export default function BookModal({ book: initialBook, onClose }) {
     getBookAPI(book._id).then(res => setBook(res.data.data)).catch(console.error);
     getRelatedBooksAPI(book._id).then(res => setRelated(res.data.data)).catch(console.error);
 
-    const socket = io('http://localhost:8080');
+    const socketUrl = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace('/api', '') : 'http://localhost:8080';
+    const socket = io(socketUrl);
     socket.emit('join_book', book._id);
     socket.on('viewers_count', count => setViewers(count));
 
