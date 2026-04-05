@@ -385,23 +385,3 @@
   border-color: var(--gold);
   transform: scale(1.05);
 }
-/* ══════════════════════════════════════
-   APPLE-STYLE BOOK MODAL RESPONSIVE
-══════════════════════════════════════ */
-
-@media (max-width: 600px) {
-  .bk-modal {
-    width: calc(100% - 24px) !important;
-    margin: 24px auto 80px !important;
-    padding: 24px 20px !important;
-    border-radius: 16px !important;
-  }
-  .bk-modal-close {
-    top: 12px !important;
-    right: 12px !important;
-  }
-}
-
-@media (max-width: 380px) {
-  .bk-modal { padding: 20px 16px !important; }
-}
