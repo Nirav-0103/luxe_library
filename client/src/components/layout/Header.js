@@ -39,7 +39,7 @@ export default function Header() {
         })
         .catch(() => {});
 
-      const socketUrl = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace('/api', '') : 'http://localhost:8080';
+      const socketUrl = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:8080';
       const socket = io(socketUrl);
       socket.on('new_order', () => {
         setNotifications(prev => [{
