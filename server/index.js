@@ -24,7 +24,7 @@ app.use('/api', limiter);
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: [ 'http://localhost:3000', process.env.FRONTEND_URL ], credentials: true }
+  cors: { origin: true, credentials: true }
 });
 
 // Attach io to req so routers can do nested emits
@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use(cors({ origin: [ 'http://localhost:3000', process.env.FRONTEND_URL ], credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
