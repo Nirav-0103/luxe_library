@@ -1,0 +1,260 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
+import './HomePage.css';
+
+const SLIDES = [
+  {
+    tag: 'Premium Collection',
+    title: 'Where Knowledge\nMeets Elegance',
+    subtitle: 'Discover over 10,000 curated titles across every discipline — from timeless classics to contemporary masterworks.',
+    cta: 'Explore Collection',
+    ctaLink: '#collection',
+    accent: '#c9a84c',
+  },
+  {
+    tag: 'Membership Benefits',
+    title: 'Your Gateway to\nEndless Worlds',
+    subtitle: 'Join our exclusive library membership and unlock unlimited access to our premium collection with personalized recommendations.',
+    cta: 'Join Today',
+    ctaLink: '/signup',
+    accent: '#5a9ce0',
+  },
+  {
+    tag: 'Digital Experience',
+    title: 'A Library Built\nFor the Modern Age',
+    subtitle: 'Seamlessly manage your reading list, track borrowed books, and receive personalized alerts — all in one elegant platform.',
+    cta: 'Get Started',
+    ctaLink: '/signup',
+    accent: '#5acea0',
+  },
+];
+
+const CATEGORIES = [
+  { icon: '⚗️', name: 'Science', count: '1,240 Titles' },
+  { icon: '💻', name: 'Technology', count: '980 Titles' },
+  { icon: '📜', name: 'History', count: '1,560 Titles' },
+  { icon: '✍️', name: 'Literature', count: '2,100 Titles' },
+  { icon: '🧠', name: 'Philosophy', count: '740 Titles' },
+  { icon: '🌍', name: 'Biography', count: '890 Titles' },
+];
+
+const STATS = [
+  { value: '10,000+', label: 'Books in Collection' },
+  { value: '3,200+', label: 'Active Members' },
+  { value: '98%', label: 'Satisfaction Rate' },
+  { value: '25+', label: 'Years of Excellence' },
+];
+
+const TESTIMONIALS = [
+  { name: 'Arjun Mehta', role: 'Researcher', text: 'The collection is extraordinary. I found rare texts here that I could not locate anywhere else in the city.' },
+  { name: 'Priya Sharma', role: 'Student', text: 'The digital management system is incredibly smooth. Tracking my borrowed books has never been easier.' },
+  { name: 'Vikram Patel', role: 'Author', text: 'A sanctuary for book lovers. The ambiance and the curated selection set this library apart from all others.' },
+];
+
+export default function HomePage() {
+  const [current, setCurrent] = useState(0);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => goTo((current + 1) % SLIDES.length), 5000);
+    return () => clearInterval(timer);
+  }, [current]);
+
+  const goTo = (idx) => {
+    if (animating) return;
+    setAnimating(true);
+    setTimeout(() => { setCurrent(idx); setAnimating(false); }, 400);
+  };
+
+  const slide = SLIDES[current];
+
+  return (
+    <div className="home">
+      <Header />
+
+      {/* ── HERO SLIDER ── */}
+      <section className="hero">
+        <div className="hero__bg">
+          {/* Animated geometric lines */}
+          <div className="hero__lines">
+            {[...Array(6)].map((_, i) => <div key={i} className="hero__line" style={{ '--i': i }} />)}
+          </div>
+          {/* Gold particle dots */}
+          <div className="hero__particles">
+            {[...Array(20)].map((_, i) => <div key={i} className="hero__particle" style={{ '--i': i }} />)}
+          </div>
+        </div>
+
+        <div className={`hero__content container ${animating ? 'hero__content--exit' : 'hero__content--enter'}`}>
+          <div className="hero__tag">
+            <span className="hero__tag-line" />
+            <span>{slide.tag}</span>
+          </div>
+          <h1 className="hero__title" style={{ '--accent': slide.accent }}>
+            {slide.title.split('\n').map((line, i) => (
+              <span key={i}>{i === 1 ? <em className="hero__title-em" style={{ color: slide.accent }}>{line}</em> : line}<br /></span>
+            ))}
+          </h1>
+          <p className="hero__subtitle">{slide.subtitle}</p>
+          <div className="hero__ctas">
+            <Link to={slide.ctaLink} className="hero__cta-primary" style={{ '--accent': slide.accent }}>
+              {slide.cta}
+              <span className="hero__cta-arrow">→</span>
+            </Link>
+            <Link to="/login" className="hero__cta-ghost">Sign In</Link>
+          </div>
+        </div>
+
+        {/* Slide Controls */}
+        <div className="hero__controls">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              className={`hero__dot ${i === current ? 'active' : ''}`}
+              onClick={() => goTo(i)}
+              style={{ '--accent': SLIDES[i].accent }}
+            />
+          ))}
+        </div>
+
+        {/* Slide Counter */}
+        <div className="hero__counter">
+          <span className="hero__counter-current">{String(current + 1).padStart(2, '0')}</span>
+          <span className="hero__counter-sep" />
+          <span className="hero__counter-total">{String(SLIDES.length).padStart(2, '0')}</span>
+        </div>
+
+        <div className="hero__scroll-hint">
+          <div className="hero__scroll-line" />
+          <span>Scroll</span>
+        </div>
+      </section>
+
+      {/* ── STATS BAR ── */}
+      <section className="stats-bar">
+        <div className="container">
+          <div className="stats-bar__grid">
+            {STATS.map((s, i) => (
+              <div key={i} className="stats-bar__item">
+                <div className="stats-bar__value">{s.value}</div>
+                <div className="stats-bar__label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── COLLECTION SECTION ── */}
+      <section className="section" id="collection">
+        <div className="container">
+          <div className="section__header">
+            <p className="section__tag">Our Catalogue</p>
+            <h2 className="section__title">Explore by Category</h2>
+            <p className="section__subtitle">A thoughtfully curated collection spanning every domain of human knowledge and imagination.</p>
+          </div>
+          <div className="categories__grid">
+            {CATEGORIES.map((cat, i) => (
+              <div key={i} className="category-card" style={{ '--delay': `${i * 0.08}s` }}>
+                <div className="category-card__icon">{cat.icon}</div>
+                <h3 className="category-card__name">{cat.name}</h3>
+                <p className="category-card__count">{cat.count}</p>
+                <div className="category-card__line" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ABOUT SECTION ── */}
+      <section className="about" id="about">
+        <div className="container">
+          <div className="about__grid">
+            <div className="about__visual">
+              <div className="about__frame">
+                <div className="about__frame-inner">
+                  <div className="about__book-stack">
+                    {['📚', '📖', '📕', '📗'].map((e, i) => (
+                      <div key={i} className="about__book" style={{ '--i': i }}>{e}</div>
+                    ))}
+                  </div>
+                  <div className="about__badge">
+                    <span className="about__badge-num">25</span>
+                    <span className="about__badge-text">Years of<br />Excellence</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="about__content">
+              <p className="section__tag">Our Story</p>
+              <h2 className="section__title" style={{ textAlign: 'left' }}>A Legacy Built on Knowledge</h2>
+              <p className="about__text">
+                Founded in 1999, Luxe Library began with a simple vision — to create a space where knowledge and beauty coexist. Over 25 years, we have grown from a small reading room to one of the finest curated libraries in Gujarat.
+              </p>
+              <p className="about__text">
+                Our collection is meticulously selected by expert librarians who believe every book should earn its place on our shelves. We don't just stock books — we curate experiences.
+              </p>
+              <div className="about__features">
+                {['Expert Curation', 'Digital Management', 'Member Benefits', 'Reading Events'].map((f, i) => (
+                  <div key={i} className="about__feature">
+                    <span className="about__feature-dot" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <Link to="/signup" className="about__cta">Become a Member</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section className="testimonials">
+        <div className="container">
+          <div className="section__header">
+            <p className="section__tag">Testimonials</p>
+            <h2 className="section__title">What Our Members Say</h2>
+          </div>
+          <div className="testimonials__grid">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className="testimonial-card">
+                <div className="testimonial-card__quote">"</div>
+                <p className="testimonial-card__text">{t.text}</p>
+                <div className="testimonial-card__author">
+                  <div className="testimonial-card__avatar">{t.name[0]}</div>
+                  <div>
+                    <div className="testimonial-card__name">{t.name}</div>
+                    <div className="testimonial-card__role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ── */}
+      <section className="cta-banner" id="contact">
+        <div className="cta-banner__glow" />
+        <div className="container">
+          <div className="cta-banner__inner">
+            <p className="section__tag">Get Started Today</p>
+            <h2 className="cta-banner__title">Ready to Begin Your Journey?</h2>
+            <p className="cta-banner__subtitle">Join thousands of members who have discovered the joy of reading with Luxe Library.</p>
+            <div className="cta-banner__actions">
+              <Link to="/signup" className="hero__cta-primary">Create Free Account</Link>
+              <Link to="/login" className="hero__cta-ghost">Sign In</Link>
+            </div>
+            <div className="cta-banner__contact">
+              <span>📞 +91 98765 43210</span>
+              <span>✉️ info@luxelibrary.in</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

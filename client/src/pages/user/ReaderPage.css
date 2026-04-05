@@ -1,0 +1,323 @@
+/* Reader Layout Fundamentals */
+.reader-layout {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+}
+
+/* Loading State */
+.reader-loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+}
+
+/* Base Themes */
+.reader-layout.theme-light {
+  background-color: #fdfbf7;
+  color: #2c2c2c;
+}
+.reader-layout.theme-sepia {
+  background-color: #f4ecdb;
+  color: #433422;
+}
+.reader-layout.theme-dark {
+  background-color: #0f1014;
+  color: #cfd4d8;
+}
+
+/* Navbar */
+.reader-navbar {
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background: rgba(0,0,0,0.03);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(128,128,128,0.1);
+  flex-shrink: 0;
+}
+
+.reader-layout.theme-dark .reader-navbar {
+  background: rgba(255,255,255,0.02);
+}
+
+.reader-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  font-family: 'Jost', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  padding: 10px;
+}
+
+.reader-btn:hover {
+  opacity: 1;
+}
+
+.reader-btn .icon {
+  font-size: 18px;
+}
+
+.reader-titlebar {
+  text-align: center;
+}
+
+.reader-titlebar .reader-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.reader-titlebar .reader-author {
+  font-size: 12px;
+  opacity: 0.6;
+  font-family: 'Jost', sans-serif;
+}
+
+/* Settings Panel */
+.reader-settings-panel {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  width: 250px;
+  border-radius: 12px;
+  padding: 20px;
+  background: inherit;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  border: 1px solid rgba(128,128,128,0.2);
+  z-index: 10;
+  font-family: 'Jost', sans-serif;
+  animation: slideDown 0.2s ease-out;
+}
+
+.reader-layout.theme-dark .reader-settings-panel {
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-row {
+  margin-bottom: 20px;
+}
+.settings-row:last-child {
+  margin-bottom: 0;
+}
+.settings-row > span {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.5;
+  margin-bottom: 10px;
+}
+
+.theme-options, .font-options {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.theme-btn {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.theme-btn.light { background: #fdfbf7; color: #2c2c2c; }
+.theme-btn.sepia { background: #f4ecdb; color: #433422; }
+.theme-btn.dark { background: #0f1014; color: #cfd4d8; }
+
+.theme-btn.active {
+  border-color: #c9a84c; /* Gold accent */
+}
+
+.font-btn {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  background: rgba(128,128,128,0.1);
+  color: inherit;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.font-btn:hover { background: rgba(128,128,128,0.2); }
+.font-current { flex: 1; text-align: center; font-size: 12px; }
+
+/* Main Reading Content area */
+.reader-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  position: relative;
+  /* hide scrollbar */
+}
+.reader-content-wrapper::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.reader-content-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 40px 120px 40px;
+  line-height: 1.8;
+}
+
+/* Cover page styling */
+.reader-book-cover {
+  text-align: center;
+  margin-bottom: 100px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid rgba(128,128,128,0.2);
+}
+
+.reader-book-cover img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  margin-bottom: 40px;
+}
+
+.reader-book-cover h1 {
+  font-size: 2.2em;
+  font-weight: 400;
+  margin: 0 0 10px 0;
+  line-height: 1.2;
+}
+
+.reader-book-cover h2 {
+  font-size: 1.2em;
+  font-weight: 300;
+  margin: 0;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.reader-publisher {
+  margin-top: 40px;
+  font-size: 0.5em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Jost', sans-serif;
+  opacity: 0.5;
+}
+
+/* Typography styles */
+.reader-chapter h2 {
+  font-size: 1.8em;
+  font-weight: 300;
+  text-align: center;
+  margin: 60px 0 40px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.reader-dropcap {
+  float: left;
+  font-size: 4em;
+  line-height: 0.8;
+  padding-right: 8px;
+  padding-top: 8px;
+  font-weight: 400;
+}
+
+.reader-chapter p {
+  margin-bottom: 1.5em;
+  text-indent: 2em;
+  text-align: justify;
+}
+
+.reader-chapter p:first-of-type {
+  text-indent: 0;
+}
+
+.reader-divider {
+  text-align: center;
+  margin: 40px 0;
+  opacity: 0.3;
+  letter-spacing: 5px;
+}
+
+/* End screen */
+.reader-end {
+  text-align: center;
+  margin-top: 100px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(128,128,128,0.2);
+}
+
+.reader-finish-btn {
+  margin-top: 30px;
+  background: transparent;
+  border: 1px solid #c9a84c;
+  color: #c9a84c;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.reader-finish-btn:hover {
+  background: #c9a84c;
+  color: #000;
+}
+
+/* Bottom Progress Bar */
+.reader-progress-bar {
+  height: 4px;
+  width: 100%;
+  background: rgba(128,128,128,0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.reader-progress-fill {
+  height: 100%;
+  background: #c9a84c;
+  width: 0%;
+  transition: width 0.1s;
+}
+
+@media (max-width: 768px) {
+  .reader-content-inner {
+    padding: 30px 20px 80px 20px;
+  }
+}

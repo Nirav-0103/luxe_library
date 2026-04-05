@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+/* ══════════════════════════════════════
+   DARK THEME (default)
+══════════════════════════════════════ */
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c87a;
+  --gold-dark: #9a7a32;
+
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111118;
+  --bg-card: #16161e;
+  --bg-card2: #1e1e2a;
+  --bg-card3: #252535;
+  --bg-input: #1e1e2a;
+  --bg-nav: rgba(10, 10, 10, 0.96);
+
+  --border-color: rgba(201, 168, 76, 0.2);
+  --border-color2: rgba(255, 255, 255, 0.07);
+
+  --text-primary: #f0ece4;
+  --text-secondary: #a09880;
+  --text-muted: #6b6358;
+
+  --red: #e05a5a;
+  --green: #5acea0;
+  --blue: #5a9ce0;
+
+  --radius: 4px;
+  --radius-lg: 8px;
+  --shadow-gold: 0 0 40px rgba(201, 168, 76, 0.15);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Shorthand aliases used throughout CSS */
+  --black: var(--bg-primary);
+  --black2: var(--bg-secondary);
+  --dark: var(--bg-card);
+  --dark2: var(--bg-card2);
+  --dark3: var(--bg-card3);
+  --text: var(--text-primary);
+  --text2: var(--text-secondary);
+  --text3: var(--text-muted);
+  --border: var(--border-color);
+  --border2: var(--border-color2);
+  --surface: var(--bg-card2);
+}
+
+/* ══════════════════════════════════════
+   LIGHT THEME
+══════════════════════════════════════ */
+[data-theme="light"] {
+  --gold: #9a6f00;
+  --gold-light: #b8860b;
+  --gold-dark: #7a5800;
+
+  --bg-primary: #faf7f2;
+  --bg-secondary: #f2ede4;
+  --bg-card: #ffffff;
+  --bg-card2: #f7f3ec;
+  --bg-card3: #ede8df;
+  --bg-input: #f7f3ec;
+  --bg-nav: rgba(250, 247, 242, 0.97);
+
+  --border-color: rgba(154, 111, 0, 0.2);
+  --border-color2: rgba(0, 0, 0, 0.08);
+
+  --text-primary: #1a1208;
+  --text-secondary: #5a4a30;
+  --text-muted: #9a8a70;
+
+  --red: #c0392b;
+  --green: #1e8449;
+  --blue: #1a6fa8;
+
+  --shadow-gold: 0 0 40px rgba(154, 111, 0, 0.1);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  --black: var(--bg-primary);
+  --black2: var(--bg-secondary);
+  --dark: var(--bg-card);
+  --dark2: var(--bg-card2);
+  --dark3: var(--bg-card3);
+  --text: var(--text-primary);
+  --text2: var(--text-secondary);
+  --text3: var(--text-muted);
+  --border: var(--border-color);
+  --border2: var(--border-color2);
+  --surface: var(--bg-card);
+}
+
+/* ══════════════════════════════════════
+   THEME TRANSITION ANIMATION
+══════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+/* Exclude animation-heavy elements from color transition */
+.hero__line,
+.hero__particle,
+.spinner,
+.hero__scroll-line {
+  transition: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Jost', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Jost', sans-serif;
+}
+
+input,
+select,
+textarea {
+  font-family: 'Jost', sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 3px;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.gold {
+  color: var(--gold);
+}
+
+/* Page enter animation */
+.page-enter {
+  animation: fadeUp 0.5s ease forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Spinner */
+.spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  transition: none !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE HELPERS
+══════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+}
+
+/* ══════════════════════════════════════
+   LUXURY ENHANCEMENTS — smooth & premium
+══════════════════════════════════════ */
+
+/* Smooth focus rings */
+:focus-visible {
+  outline: 1.5px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Selection highlight */
+::selection {
+  background: rgba(201, 168, 76, 0.25);
+  color: var(--text-primary);
+}
+
+/* Gold shimmer animation for decorative elements */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light), var(--gold), var(--gold-dark));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Button press effect */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Smooth card hover utility */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(201, 168, 76, 0.2);
+}
+
+/* Toast / notification entrance */
+@keyframes slideInRight {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Pulse glow for indicators */
+@keyframes pulseGold {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(201, 168, 76, 0);
+  }
+}
+
+.pulse-gold {
+  animation: pulseGold 2s ease infinite;
+}
+
+/* Ultra smooth page transitions */
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Luxury divider */
+.luxury-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.luxury-divider::before,
+.luxury-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+}
+
+/* Back to top smooth hover */
+button[title="Back to Top"]:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.6) !important;
+}
