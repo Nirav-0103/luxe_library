@@ -321,3 +321,35 @@
     padding: 30px 20px 80px 20px;
   }
 }
+
+/* ══════════════════════════════════════
+   APPLE-STYLE READER RESPONSIVE
+══════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .reader__layout { grid-template-columns: 1fr !important; }
+  .reader__sidebar {
+    position: static !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    padding: 12px 16px !important;
+    scrollbar-width: none;
+  }
+  .reader__sidebar::-webkit-scrollbar { display: none; }
+  .reader__sidebar-item { white-space: nowrap !important; flex-shrink: 0 !important; }
+}
+@media (max-width: 768px) {
+  .reader__toolbar { flex-wrap: wrap; gap: 8px !important; }
+  .reader__content { padding: 24px 20px !important; font-size: 15px !important; line-height: 1.75 !important; }
+  .reader__page-controls { gap: 10px !important; }
+}
+@media (max-width: 480px) {
+  .reader__content { padding: 20px 16px !important; font-size: 14px !important; }
+  .reader__toolbar-btn { padding: 8px 10px !important; font-size: 11px !important; }
+  .reader__font-size-btn { width: 36px !important; height: 36px !important; }
+}

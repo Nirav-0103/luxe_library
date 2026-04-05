@@ -557,3 +557,45 @@
   .udash__search { width: 100%; border-radius: 8px; }
   .udash__section-header { flex-direction: column; align-items: stretch; }
 }
+/* ══════════════════════════════════════
+   APPLE-STYLE USER DASHBOARD RESPONSIVE
+══════════════════════════════════════ */
+
+@media (max-width: 1100px) {
+  .ud-layout { grid-template-columns: 240px 1fr !important; gap: 24px !important; }
+}
+@media (max-width: 900px) {
+  .ud-layout { grid-template-columns: 1fr !important; }
+  .ud-sidebar {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    padding: 16px !important;
+  }
+  .ud-sidebar__nav { display: contents !important; }
+  .ud-sidebar__link {
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 10px 8px !important;
+    font-size: 11px !important;
+    gap: 6px;
+    flex-direction: column !important;
+  }
+  .ud-sidebar__link-icon { font-size: 18px !important; }
+}
+@media (max-width: 600px) {
+  .ud-hero { padding: 100px 0 40px !important; }
+  .ud-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .ud-stat { padding: 16px 12px !important; }
+  .ud-stat__value { font-size: clamp(20px, 6vw, 32px) !important; }
+  .ud-order-row { grid-template-columns: 1fr 1fr !important; gap: 8px !important; font-size: 12px !important; }
+  .ud-section { padding: 24px 16px !important; }
+}
+@media (max-width: 400px) {
+  .ud-stats-grid { grid-template-columns: 1fr !important; }
+  .ud-sidebar {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .ud-order-row { grid-template-columns: 1fr !important; }
+}

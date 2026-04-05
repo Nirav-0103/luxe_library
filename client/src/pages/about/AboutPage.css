@@ -424,3 +424,31 @@
 @media (max-width: 400px) {
   .about-team__grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════════════
+   APPLE-STYLE ABOUT RESPONSIVE
+══════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .about__layout { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .about__visual { display: none !important; }
+}
+@media (max-width: 768px) {
+  .about__hero { padding: 110px 0 48px !important; }
+  .about__hero-title { font-size: clamp(32px, 7vw, 52px) !important; }
+  .about__values-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+  .about__team-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
+  .about__timeline { padding-left: 24px !important; }
+  .about__timeline-item::before { left: -24px !important; }
+}
+@media (max-width: 480px) {
+  .about__hero { padding: 100px 0 40px !important; }
+  .about__hero-title { font-size: clamp(28px, 8vw, 42px) !important; }
+  .about__values-grid { grid-template-columns: 1fr !important; }
+  .about__team-grid { grid-template-columns: 1fr !important; max-width: 320px; margin: 0 auto; }
+  .about__value-card { padding: 20px 16px !important; }
+  .about__section-title { font-size: clamp(24px, 6vw, 36px) !important; }
+}
+@media (max-width: 360px) {
+  .about__value-card { padding: 16px 12px !important; }
+}

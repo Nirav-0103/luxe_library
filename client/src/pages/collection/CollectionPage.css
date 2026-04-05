@@ -244,3 +244,33 @@
 @media (max-width: 380px) {
   .books-grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════════════
+   APPLE-STYLE COLLECTION RESPONSIVE
+══════════════════════════════════════ */
+
+@media (max-width: 1200px) {
+  .col-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (max-width: 900px) {
+  .col-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px; }
+  .col-filter-bar { flex-wrap: wrap; gap: 10px; }
+  .col-filter-bar select { min-width: 140px; }
+}
+@media (max-width: 600px) {
+  .col-grid { grid-template-columns: 1fr !important; }
+  .books-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
+  .book-card__cover { height: 180px; }
+  .book-card__info { padding: 12px; }
+  .book-card__title { font-size: 15px !important; }
+  .collection-hero { padding: 110px 0 48px !important; }
+  .cat-search { width: 100% !important; }
+  .col-filter-bar { flex-direction: column; }
+  .col-filter-bar select, .col-filter-bar input {
+    width: 100%;
+  }
+}
+@media (max-width: 400px) {
+  .books-grid { grid-template-columns: 1fr !important; }
+  .book-card__cover { height: 200px; }
+}

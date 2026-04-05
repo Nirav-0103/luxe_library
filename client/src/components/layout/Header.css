@@ -595,3 +595,56 @@
   background: var(--bg-card3);
   transform: translateY(-1px);
 }
+/* ══════════════════════════════════════
+   APPLE-STYLE HEADER RESPONSIVE FIXES
+══════════════════════════════════════ */
+
+/* iPad Pro / large tablet */
+@media (max-width: 1100px) {
+  .header__nav { gap: 16px; }
+  .header__auth { gap: 8px; }
+  .theme-toggle__label { display: none; }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .header__logo-text { font-size: 15px; }
+}
+
+/* iPhone landscape */
+@media (max-width: 767px) and (orientation: landscape) {
+  .header__nav {
+    gap: 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 80px 24px 24px;
+    overflow-y: auto;
+  }
+  .header__link { font-size: 14px; }
+}
+
+/* Small phones */
+@media (max-width: 390px) {
+  .header__logo-text { display: none; }
+  .header__auth { gap: 4px; }
+  .header__cart, .header__notif {
+    width: 36px;
+    height: 36px;
+  }
+  .header__btn-gold {
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+}
+
+/* Ultra small */
+@media (max-width: 320px) {
+  .header__inner { padding: 0 10px; }
+}
+
+/* Notch/Dynamic Island safe area */
+.header {
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}

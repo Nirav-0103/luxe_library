@@ -516,3 +516,102 @@
     transform: translateX(calc(-50% - 12px));
   }
 }
+
+/* ══════════════════════════════════════
+   APPLE-STYLE HOMEPAGE RESPONSIVE
+══════════════════════════════════════ */
+
+/* ── Hero ── */
+@media (max-width: 1200px) {
+  .hero__title { font-size: clamp(38px, 6vw, 64px); }
+}
+@media (max-width: 900px) {
+  .hero__content.container { padding: 0 32px; }
+  .hero__tag { margin-bottom: 16px; }
+  .hero__title { font-size: clamp(34px, 7vw, 56px); line-height: 1.1; }
+  .hero__subtitle { font-size: 15px; max-width: 520px; }
+}
+@media (max-width: 600px) {
+  .hero__cta-primary, .hero__cta-ghost {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 24px;
+    font-size: 13px;
+  }
+}
+
+/* ── Stats bar ── */
+@media (max-width: 900px) {
+  .stats-bar__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+@media (max-width: 480px) {
+  .stats-bar__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .stats-bar__value { font-size: clamp(24px, 7vw, 36px); }
+  .stats-bar__label { font-size: 11px; }
+}
+
+/* ── Category grid ── */
+@media (max-width: 900px) {
+  .categories__grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .categories__grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+  .cat-card { padding: 20px 12px !important; }
+  .cat-card__icon { font-size: 28px !important; }
+  .cat-card__name { font-size: 13px !important; }
+}
+@media (max-width: 380px) {
+  .categories__grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── Testimonials ── */
+@media (max-width: 900px) {
+  .testimonials__grid {
+    grid-template-columns: 1fr !important;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 600px) {
+  .testi-card { padding: 24px 20px !important; }
+  .testi-card__text { font-size: 14px !important; }
+}
+
+/* ── CTA Banner ── */
+@media (max-width: 900px) {
+  .cta-banner { padding: 56px 0 !important; }
+  .cta-banner__title { font-size: clamp(28px, 6vw, 44px) !important; }
+  .cta-banner__actions { flex-direction: column; align-items: center; gap: 12px; }
+  .cta-banner__actions a, .cta-banner__actions button {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 600px) {
+  .cta-banner { padding: 48px 0 !important; }
+  .cta-banner__contact { flex-direction: column; gap: 10px; }
+}
+
+/* ── Section headers ── */
+@media (max-width: 768px) {
+  .section__title { font-size: clamp(26px, 6vw, 40px) !important; }
+  .section__subtitle { font-size: 14px !important; }
+  .section { padding: 56px 0 !important; }
+}
+@media (max-width: 480px) {
+  .section { padding: 40px 0 !important; }
+}

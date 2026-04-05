@@ -106,3 +106,44 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ══════════════════════════════════════
+   APPLE-STYLE FOOTER RESPONSIVE
+══════════════════════════════════════ */
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+@media (max-width: 1024px) {
+  .footer__grid { grid-template-columns: 2fr 1fr 1fr; gap: 32px; }
+}
+@media (max-width: 768px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .footer__brand { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .footer__brand { grid-column: unset; }
+}
+
+/* Newsletter banner responsive */
+@media (max-width: 768px) {
+  .footer form {
+    flex-direction: column !important;
+  }
+  .footer form input,
+  .footer form button {
+    width: 100% !important;
+    border-radius: 8px !important;
+  }
+}
+@media (max-width: 480px) {
+  .footer { padding-top: 48px !important; }
+}

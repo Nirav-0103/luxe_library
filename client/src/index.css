@@ -367,3 +367,72 @@ button[title="Back to Top"]:hover {
   transform: translateY(-3px) !important;
   box-shadow: 0 8px 30px rgba(201, 168, 76, 0.6) !important;
 }
+/* ══════════════════════════════════════
+   APPLE-STYLE RESPONSIVE SYSTEM
+   Mobile-first, all screens covered
+══════════════════════════════════════ */
+
+/* Fluid typography scale */
+:root {
+  --fs-xs:   clamp(10px, 2vw, 12px);
+  --fs-sm:   clamp(12px, 2.5vw, 14px);
+  --fs-base: clamp(14px, 2.8vw, 16px);
+  --fs-md:   clamp(16px, 3vw, 18px);
+  --fs-lg:   clamp(18px, 3.5vw, 22px);
+  --fs-xl:   clamp(22px, 4vw, 28px);
+  --fs-2xl:  clamp(28px, 5vw, 36px);
+  --fs-3xl:  clamp(36px, 6vw, 52px);
+  --fs-4xl:  clamp(44px, 8vw, 72px);
+
+  /* Spacing scale */
+  --sp-xs:  clamp(4px,  1vw, 8px);
+  --sp-sm:  clamp(8px,  2vw, 12px);
+  --sp-md:  clamp(12px, 2.5vw, 20px);
+  --sp-lg:  clamp(20px, 3vw, 32px);
+  --sp-xl:  clamp(32px, 4vw, 56px);
+  --sp-2xl: clamp(48px, 6vw, 96px);
+}
+
+/* ── Universal responsive helpers ── */
+.hide-mobile  { display: block !important; }
+.show-mobile  { display: none  !important; }
+
+@media (max-width: 767px) {
+  .hide-mobile { display: none  !important; }
+  .show-mobile { display: block !important; }
+}
+
+/* ── Touch targets (Apple HIG: min 44px) ── */
+@media (max-width: 767px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important; /* prevents iOS zoom */
+    min-height: 44px;
+  }
+}
+
+/* ── Safe area insets (iPhone notch/Dynamic Island) ── */
+body {
+  padding-left:   env(safe-area-inset-left);
+  padding-right:  env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── Prevent text overflow globally ── */
+p, h1, h2, h3, h4, h5, h6, span, li {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* ── Responsive images ── */
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Apple-style smooth scroll with momentum ── */
+* {
+  -webkit-overflow-scrolling: touch;
+}

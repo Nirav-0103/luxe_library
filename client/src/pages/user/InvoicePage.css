@@ -296,3 +296,26 @@
     width: 100%;
   }
 }
+
+/* ══════════════════════════════════════
+   APPLE-STYLE INVOICE RESPONSIVE
+══════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .invoice { padding: 100px 0 48px !important; }
+  .invoice__box { padding: 28px 20px !important; }
+  .invoice__header { flex-direction: column !important; gap: 16px !important; align-items: flex-start !important; }
+  .invoice__header-right { text-align: left !important; }
+  .invoice__meta-grid { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 480px) {
+  .invoice__box { padding: 20px 14px !important; }
+  .invoice__meta-grid { grid-template-columns: 1fr !important; }
+  .invoice__table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .invoice__table table { min-width: 400px; }
+  .invoice__title { font-size: clamp(24px, 7vw, 36px) !important; }
+  .invoice__print-btn {
+    width: 100% !important;
+    min-height: 48px;
+  }
+}
