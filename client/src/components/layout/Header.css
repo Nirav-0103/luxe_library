@@ -407,6 +407,11 @@
 /* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
+
+/* Hidden by default — only shown inside mobile nav */
+.header__mobile-only-theme {
+  display: none;
+}
 @media (max-width: 1100px) {
   .header__nav {
     gap: 18px;
@@ -477,13 +482,12 @@
   }
 }
 
-@media (max-width: 600px) {
+
+@media (max-width: 480px) {
   .header__logo-text {
     display: none;
   }
-}
 
-@media (max-width: 480px) {
   .header__btn-gold {
     padding: 7px 12px;
     font-size: 10px;
