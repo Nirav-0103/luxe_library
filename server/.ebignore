@@ -1,0 +1,8 @@
+.env
+node_modules
+.DS_Store
+*.log
+drop.js
+fix-orders.js
+seed-books.js
+update-stock.js
