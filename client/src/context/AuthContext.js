@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { getWishlistAPI, toggleWishlistAPI } from '../api';
+import { getWishlistAPI, toggleWishlistAPI, getMeAPI } from '../api';
 
 const AuthContext = createContext();
 
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchMe = async () => {
     try {
-      const res = await axios.get('/api/auth/me');
+      const res = await getMeAPI();
       setUser(res.data.user);
       fetchWishlist();
     } catch {
