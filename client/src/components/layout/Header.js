@@ -126,6 +126,22 @@ export default function Header() {
               {user.role === 'admin' ? 'Admin Panel' : 'My Dashboard'}
             </Link>
           )}
+
+          {/* Theme Toggle - Mobile Only */}
+          <div className="header__mobile-only-theme">
+            <button
+              className={`theme-toggle ${isDark ? 'theme-toggle--dark' : 'theme-toggle--light'} ${toggling ? 'theme-toggle--spinning' : ''}`}
+              onClick={handleToggle}
+              aria-label="Toggle theme"
+            >
+              <span className="theme-toggle__track">
+                <span className="theme-toggle__thumb">
+                  <span className="theme-toggle__icon">{isDark ? '🌙' : '☀️'}</span>
+                </span>
+              </span>
+              <span className="theme-toggle__label">{isDark ? 'Dark Mode' : 'Light Mode'}</span>
+            </button>
+          </div>
         </nav>
 
         <div className="header__auth">

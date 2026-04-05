@@ -82,7 +82,7 @@ export default function CategoryPage() {
         <div className="container">
           {/* Search & Filters */}
           <div className="cat-filters-container" style={{ marginBottom: 40 }}>
-            <div className="cat-search-wrap" style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: showFilters ? 20 : 0 }}>
+            <div className="cat-search-wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginBottom: showFilters ? 20 : 0 }}>
               <input
                 className="cat-search"
                 placeholder={`Search ${label}...`}

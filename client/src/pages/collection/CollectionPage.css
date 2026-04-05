@@ -235,7 +235,7 @@
 }
 @media (max-width: 600px) {
   .col-grid { grid-template-columns: 1fr; }
-  .books-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .books-grid { grid-template-columns: 1fr; gap: 16px; }
   .book-card__cover { height: 180px; }
   .collection-hero { padding: 120px 0 50px; }
   .collection-hero__title { font-size: clamp(34px, 8vw, 48px); }

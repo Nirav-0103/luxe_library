@@ -417,6 +417,9 @@
   .about-stats__grid { grid-template-columns: repeat(2, 1fr); }
   .about-hero__visual { display: none; }
   .about-mission__quote-box { padding: 32px 24px; }
+  .about-stats { padding-bottom: 90px; }
+  .about-hero__ctas, .about-cta__actions { flex-direction: column; align-items: stretch; }
+  .about-hero__cta-primary, .about-hero__cta-ghost { width: 100%; justify-content: center; }
 }
 @media (max-width: 400px) {
   .about-team__grid { grid-template-columns: 1fr; }
