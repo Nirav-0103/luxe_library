@@ -44,7 +44,8 @@ router.get('/my', protect, async (req, res) => {
   try {
     const complaints = await Complaint.find({ user: req.user._id })
       .populate('order', 'orderNumber totalAmount orderStatus paymentStatus')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
     res.json({ success: true, data: complaints });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -61,7 +62,8 @@ router.get('/admin/all', protect, adminOnly, async (req, res) => {
     const complaints = await Complaint.find(query)
       .populate('user', 'name email membershipId')
       .populate('order', 'orderNumber totalAmount orderStatus paymentStatus')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
     res.json({ success: true, data: complaints, count: complaints.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

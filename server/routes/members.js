@@ -8,7 +8,7 @@ router.get('/', protect, staffOnly, async (req, res) => {
     const { search } = req.query;
     let query = {};
     if (search) query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }, { membershipId: { $regex: search, $options: 'i' } }];
-    const members = await Member.find(query).sort({ createdAt: -1 });
+    const members = await Member.find(query).sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: members, count: members.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

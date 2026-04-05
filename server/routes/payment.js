@@ -167,7 +167,8 @@ router.get('/refunds', protect, adminOnly, async (req, res) => {
     })
       .populate('user', 'name email')
       .populate('items.book', 'title')
-      .sort({ refundedAt: -1, updatedAt: -1 });
+      .sort({ refundedAt: -1, updatedAt: -1 })
+      .lean();
 
     res.json({ success: true, data: orders, count: orders.length });
   } catch (err) {

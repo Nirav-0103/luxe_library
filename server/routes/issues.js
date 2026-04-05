@@ -10,7 +10,7 @@ router.get('/', protect, staffOnly, async (req, res) => {
     let query = {};
     if (status && status !== 'all') query.status = status;
     await Issue.updateMany({ status: 'issued', dueDate: { $lt: new Date() } }, { status: 'overdue' });
-    const issues = await Issue.find(query).populate('book', 'title author isbn').populate('member', 'name email membershipId').sort({ createdAt: -1 });
+    const issues = await Issue.find(query).populate('book', 'title author isbn').populate('member', 'name email membershipId').sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: issues, count: issues.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

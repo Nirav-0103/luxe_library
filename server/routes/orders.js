@@ -95,7 +95,8 @@ router.get('/admin/all', protect, adminOnly, async (req, res) => {
       .populate('items.book', 'title author coverImage')
       .sort({ createdAt: -1 })
       .skip((pageNum - 1) * limitNum)
-      .limit(limitNum);
+      .limit(limitNum)
+      .lean();
       
     res.json({ 
       success: true, 
@@ -121,7 +122,8 @@ router.get('/admin/export/csv', protect, adminOnly, async (req, res) => {
     const orders = await Order.find(query)
       .populate('user', 'name email membershipId')
       .populate('items.book', 'title')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     const csvData = orders.map(o => ({
       'Order Number': o.orderNumber,
@@ -319,7 +321,8 @@ router.get('/my', protect, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id })
       .populate('items.book', 'title author coverImage')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
     res.json({ success: true, data: orders });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

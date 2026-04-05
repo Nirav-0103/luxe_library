@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
     else if (sortBy === 'rating_desc') sortOptions = { rating: -1 };
     else if (sortBy === 'newest') sortOptions = { createdAt: -1 };
 
-    const books = await Book.find(query).sort(sortOptions);
+    const books = await Book.find(query).sort(sortOptions).lean();
     res.json({ success: true, data: books, count: books.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -70,7 +70,7 @@ router.get('/recommended', protect, async (req, res) => {
     }
 
     // Grab categories from past orders (if any)
-    const pastOrders = await Order.find({ user: user._id }).populate('items.book', 'category');
+    const pastOrders = await Order.find({ user: user._id }).populate('items.book', 'category').lean();
     pastOrders.forEach(order => {
       order.items.forEach(item => {
         if (item.book && item.book.category) preferredCategories.add(item.book.category);
@@ -84,12 +84,12 @@ router.get('/recommended', protect, async (req, res) => {
     if (categoriesArray.length > 0) {
       recommended = await Book.find({ category: { $in: categoriesArray } })
         .sort({ rating: -1, numReviews: -1 }) // collaborative filtering via top ratings in favored genres
-        .limit(6);
+        .limit(6).lean();
     } 
 
     // If still empty (new user), just recommend top global books
     if (recommended.length === 0) {
-      recommended = await Book.find().sort({ rating: -1, numReviews: -1 }).limit(6);
+      recommended = await Book.find().sort({ rating: -1, numReviews: -1 }).limit(6).lean();
     }
 
     res.json({ success: true, data: recommended });
@@ -198,7 +198,7 @@ router.get('/:id/related', async (req, res) => {
     const related = await Book.find({
       category: book.category,
       _id: { $ne: book._id }
-    }).limit(4);
+    }).limit(4).lean();
     
     res.json({ success: true, data: related });
   } catch (err) {

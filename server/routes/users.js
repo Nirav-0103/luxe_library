@@ -11,7 +11,7 @@ router.get('/', protect, adminOnly, async (req, res) => {
     let query = {};
     if (search) query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
     if (role && role !== 'all') query.role = role;
-    const users = await User.find(query).select('-password').sort({ createdAt: -1 });
+    const users = await User.find(query).select('-password').sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: users, count: users.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
