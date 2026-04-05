@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { getDashboardAPI, getAdvancedDashboardAPI } from '../../api';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -90,13 +90,21 @@ export default function DashboardHome() {
   const [stats, setStats] = useState(null);
   const [adv, setAdv]     = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadMsg, setLoadMsg] = useState('');
   const [revenueMonths, setRevenueMonths] = useState(6);
+  const t1 = useRef(null); const t2 = useRef(null);
 
   useEffect(() => {
+    t1.current = setTimeout(() => setLoadMsg('Connecting to server…'), 3000);
+    t2.current = setTimeout(() => setLoadMsg('Server is waking up — this takes ~30s on first visit ☕'), 8000);
     Promise.all([getDashboardAPI(), getAdvancedDashboardAPI()])
       .then(([r1, r2]) => { setStats(r1.data.data); setAdv(r2.data.data); })
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        clearTimeout(t1.current); clearTimeout(t2.current);
+        setLoading(false);
+      });
+    return () => { clearTimeout(t1.current); clearTimeout(t2.current); };
   }, []);
 
   // Pad revenue data with empty days
@@ -145,8 +153,24 @@ export default function DashboardHome() {
     ].filter(d => d.value > 0);
   }, [stats]);
 
-  if (loading) return <div className="ap-loading"><div className="spinner" /></div>;
-  if (!stats || !adv) return <div className="ap-loading">Failed to load.</div>;
+  if (loading) return (
+    <div className="ap-loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+      <div className="spinner" />
+      {loadMsg && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '10px 18px', borderRadius: 10,
+          background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.25)',
+          color: 'var(--gold)', fontSize: 13, maxWidth: 420, textAlign: 'center',
+          animation: 'fadeIn 0.4s ease',
+        }}>
+          <span style={{ width: 8, height: 8, minWidth: 8, borderRadius: '50%', background: 'var(--gold)', animation: 'wakePulse 1.2s ease-in-out infinite', display: 'inline-block' }} />
+          {loadMsg}
+        </div>
+      )}
+    </div>
+  );
+  if (!stats || !adv) return <div className="ap-loading" style={{ color: 'var(--red)' }}>Could not reach server. Please refresh and try again.</div>;
 
   const todayDateStr = new Date().toISOString().split('T')[0];
   const todaySalesData = adv?.salesGraph?.find(x => x._id === todayDateStr) || { revenue: 0, orders: 0 };

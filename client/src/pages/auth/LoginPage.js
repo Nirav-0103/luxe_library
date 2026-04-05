@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { loginAPI } from '../../api';
@@ -9,31 +9,49 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [serverWaking, setServerWaking] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const wakeTimerRef = useRef(null);
 
   const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+  const handleSubmit = async (e, overrideForm) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const payload = overrideForm || form;
+    if (!payload.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
       toast.error('Please enter a valid email address'); return;
     }
-    if (!form.password || form.password.length < 6) {
+    if (!payload.password || payload.password.length < 6) {
       toast.error('Password must be at least 6 characters'); return;
     }
     try {
       setLoading(true);
-      const res = await loginAPI(form);
+      // Show server wake-up notice after 3s
+      wakeTimerRef.current = setTimeout(() => setServerWaking(true), 3000);
+      const res = await loginAPI(payload);
+      clearTimeout(wakeTimerRef.current);
+      setServerWaking(false);
       login(res.data.user, res.data.token);
       toast.success(`Welcome back, ${res.data.user.name}!`);
       navigate(res.data.user.role === 'admin' || res.data.user.role === 'librarian' ? '/admin' : '/dashboard');
     } catch (err) {
+      clearTimeout(wakeTimerRef.current);
+      setServerWaking(false);
       toast.error(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  // Quick-login: fill form AND auto-submit
+  const handleQuickLogin = (email, password) => {
+    const payload = { email, password };
+    setForm(payload);
+    handleSubmit(null, payload);
+  };
+
+  useEffect(() => () => clearTimeout(wakeTimerRef.current), []);
 
   return (
     <div className="auth">
@@ -87,8 +105,20 @@ export default function LoginPage() {
             </div>
 
             <button type="submit" className="auth__submit" disabled={loading}>
-              {loading ? <span className="auth__spinner" /> : 'Sign In →'}
+              {loading ? (
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+                  <span className="auth__spinner" />
+                  {serverWaking ? 'Waking up server…' : 'Signing in…'}
+                </span>
+              ) : 'Sign In →'}
             </button>
+
+            {serverWaking && (
+              <div className="auth__wake-banner">
+                <span className="auth__wake-pulse" />
+                <span>☕ Server is waking up on first visit — this can take up to 30s. Please wait…</span>
+              </div>
+            )}
           </form>
 
           <div className="auth__divider"><span>or</span></div>
@@ -97,7 +127,7 @@ export default function LoginPage() {
             <p className="auth__demo-title">Quick Login</p>
             <div className="auth__demo-cards">
               <button className="auth__demo-card"
-                onClick={() => setForm({ email: 'niravahir448@gmail.com', password: 'Nirav1234' })}>
+                onClick={() => handleQuickLogin('niravahir448@gmail.com', 'Nirav1234')}>
                 <span className="auth__demo-icon">🛡️</span>
                 <span className="auth__demo-label">Admin</span>
                 <span className="auth__demo-email">niravahir448@gmail.com</span>

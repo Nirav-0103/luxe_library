@@ -75,8 +75,8 @@ async function seed() {
     let isbnCounter = 978000000;
 
     for (const cat of CATEGORIES) {
-      // 20 to 50 books per category
-      const count = Math.floor(Math.random() * (50 - 20 + 1)) + 20; 
+      // 42 to 47 books per category
+      const count = Math.floor(Math.random() * (47 - 42 + 1)) + 42; 
       console.log(`Generating ${count} books for ${cat}...`);
 
       for (let i = 0; i < count; i++) {

@@ -9,6 +9,10 @@ const { Server } = require('socket.io');
 const app = express();
 app.set('trust proxy', 1); // Fixes express-rate-limit crash behind local proxies
 
+// Performance Setup
+const compression = require('compression');
+app.use(compression());
+
 // Phase 11: Security Hardening
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
