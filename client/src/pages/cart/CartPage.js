@@ -105,17 +105,14 @@ export default function CartPage() {
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
                           if (!isNaN(val)) {
-                            if (val > (book.availableCopies || 1)) updateQuantity(book._id, book.availableCopies || 1);
-                            else if (val < 1) updateQuantity(book._id, 1);
+                            if (val < 1) updateQuantity(book._id, 1);
                             else updateQuantity(book._id, val);
                           }
                         }} 
                       />
-                      {/* Fix #22: Cap at local availableCopies */}
                       <button
                         className="cart-qty-btn"
                         onClick={() => updateQuantity(book._id, (book.quantity || 1) + 1)}
-                        disabled={(book.quantity || 1) >= (book.availableCopies || 1)}
                         title="Increase"
                       >+</button>
                     </div>

@@ -5,7 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { io } from 'socket.io-client';
-import { getAdminOrdersAPI, getMyOrdersAPI } from '../../api';
+import { getAdminOrdersAPI, getMyOrdersAPI, getBooksAPI } from '../../api';
+import BookModal from '../../pages/collection/BookModal';
 import './Header.css';
 
 export default function Header() {
@@ -20,6 +21,14 @@ export default function Header() {
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
   const notifRef = useRef(null);
+
+  // Search States
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     if (!user) return;
@@ -85,16 +94,36 @@ export default function Header() {
 
   useEffect(() => { setMenuOpen(false); }, [location]);
 
-  // Close notification panel when clicking outside
+  // Close notification panel and search when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
         setShowNotif(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearchDropdown(false);
+      }
     };
-    if (showNotif) document.addEventListener('mousedown', handleClickOutside);
+    if (showNotif || showSearchDropdown) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showNotif]);
+  }, [showNotif, showSearchDropdown]);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    const delay = setTimeout(() => {
+      getBooksAPI({ search: searchQuery })
+        .then(res => {
+          setSearchResults((res.data.data || []).slice(0, 5));
+        })
+        .finally(() => setIsSearching(false));
+    }, 400);
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -125,6 +154,42 @@ export default function Header() {
 
   const newNotifCount = notifications.filter(n => n.isNew).length;
 
+  const renderSearch = () => (
+    <div className="header__search-container" ref={searchRef}>
+      <input 
+        type="text" 
+        className="header__search-input" 
+        placeholder="🔍 Search books..." 
+        value={searchQuery}
+        onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDropdown(true); }}
+        onFocus={() => setShowSearchDropdown(true)}
+      />
+      {showSearchDropdown && searchQuery.trim().length > 0 && (
+        <div className="header__search-dropdown">
+          {isSearching ? (
+            <div className="header__search-empty">Searching...</div>
+          ) : searchResults.length === 0 ? (
+            <div className="header__search-empty">No books found</div>
+          ) : (
+            searchResults.map(b => (
+              <div key={b._id} className="header__search-item" onClick={() => {
+                setShowSearchDropdown(false);
+                setSearchQuery('');
+                setSelectedBook(b);
+              }}>
+                <img src={b.coverImage || ''} alt="" className="header__search-cover" onError={e => e.target.style.display='none'} />
+                <div className="header__search-details">
+                  <span className="header__search-title">{b.title}</span>
+                  <span className="header__search-author">{b.author}</span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
     <header className={`header ${scrolled || !isHome ? 'header--solid' : ''}`}>
@@ -154,6 +219,7 @@ export default function Header() {
 
         {/* ── DESKTOP AUTH ── */}
         <div className="header__auth header__auth--desktop">
+          {renderSearch()}
           {/* Theme Toggle */}
           <button
             className={`theme-toggle ${isDark ? 'theme-toggle--dark' : 'theme-toggle--light'} ${toggling ? 'theme-toggle--spinning' : ''}`}
@@ -347,6 +413,7 @@ export default function Header() {
           </div>
 
           <nav className="header__mobile-nav">
+            {renderSearch()}
             <Link to="/" className={getClass('/')}>Home</Link>
             <Link to="/collection" className={getClass('/collection')}>Collection</Link>
             <Link to="/about" className={getClass('/about')}>About</Link>
@@ -400,6 +467,7 @@ export default function Header() {
       </>,
       document.body
     )}
+    {selectedBook && <BookModal book={selectedBook} onClose={() => setSelectedBook(null)} />}
   </>
   );
 }

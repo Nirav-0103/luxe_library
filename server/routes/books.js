@@ -16,10 +16,18 @@ router.get('/category-counts', async (req, res) => {
   }
 });
 
+const queryCache = new Map();
+const CACHE_TTL = 30 * 1000; // 30 seconds
+
 // GET all books with search & filter (public)
 router.get('/', async (req, res) => {
   try {
-    const { search, category, minPrice, maxPrice, minRating, sortBy } = req.query;
+    const cacheKey = JSON.stringify(req.query);
+    if (queryCache.has(cacheKey) && Date.now() - queryCache.get(cacheKey).timestamp < CACHE_TTL) {
+      return res.json({ success: true, data: queryCache.get(cacheKey).data, count: queryCache.get(cacheKey).data.length, cached: true });
+    }
+
+    const { search, category, minPrice, maxPrice, minRating, sortBy, limit } = req.query;
     let query = {};
     if (search) query.$or = [
       { title: { $regex: search, $options: 'i' } },
@@ -46,7 +54,12 @@ router.get('/', async (req, res) => {
     else if (sortBy === 'rating_desc') sortOptions = { rating: -1 };
     else if (sortBy === 'newest') sortOptions = { createdAt: -1 };
 
-    const books = await Book.find(query).sort(sortOptions).lean();
+    let mongoQuery = Book.find(query).sort(sortOptions);
+    if (limit) mongoQuery = mongoQuery.limit(Number(limit));
+    
+    const books = await mongoQuery.lean();
+    queryCache.set(cacheKey, { data: books, timestamp: Date.now() });
+    
     res.json({ success: true, data: books, count: books.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

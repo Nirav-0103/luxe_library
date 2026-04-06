@@ -21,7 +21,7 @@ app.use(helmet({ crossOriginResourcePolicy: false })); // allow cross-origin req
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 200, 
+  max: 20000, 
   message: { success: false, message: 'Too many requests, slow down please.' }
 });
 app.use('/api', limiter);

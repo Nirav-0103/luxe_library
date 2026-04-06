@@ -30,8 +30,8 @@ const userSchema = new mongoose.Schema({
 // Auto-assign membershipId for members + hash password on save
 userSchema.pre('save', async function (next) {
   if (this.role === 'member' && !this.membershipId) {
-    const count = await mongoose.model('User').countDocuments({ role: 'member' });
-    this.membershipId = 'LIB' + String(count + 1).padStart(5, '0');
+    const randomHex = require('crypto').randomBytes(3).toString('hex').toUpperCase();
+    this.membershipId = 'LIB-' + randomHex;
   }
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);

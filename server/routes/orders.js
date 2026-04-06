@@ -21,9 +21,9 @@ async function decrementStock(items) {
   const results = [];
   for (const item of items) {
     const qty = item.quantity || 1;
-    // Fix #3/#11: Atomic check-and-decrement — only succeeds if enough stock
+    // Update without atomic stock limitation
     const updated = await Book.findOneAndUpdate(
-      { _id: item.book, availableCopies: { $gte: qty } },
+      { _id: item.book },
       { $inc: { availableCopies: -qty } },
       { new: true }
     );
@@ -49,7 +49,7 @@ async function restoreStock(items) {
   }
 }
 
-// ── Helper: Recalculate total from DB book prices (Fix #7/#8) ──
+// ── Helper: Recalculate total from DB book prices ──
 async function recalculateTotal(items) {
   let total = 0;
   const validatedItems = [];
@@ -57,7 +57,7 @@ async function recalculateTotal(items) {
     const book = await Book.findById(item.book);
     if (!book) throw new Error(`Book not found: ${item.book}`);
     const serverPrice = book.price || 0;
-    const qty = Math.max(1, Math.min(item.quantity || 1, book.availableCopies || 1)); // cap up to max available copies
+    const qty = Math.max(1, item.quantity || 1); // remove cap up to max available copies
     validatedItems.push({
       book: book._id,
       title: book.title,
