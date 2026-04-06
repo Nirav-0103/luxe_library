@@ -99,11 +99,11 @@ export default function CartPage() {
                         title="Decrease"
                       >−</button>
                       <span className="cart-qty-num">{book.quantity || 1}</span>
-                      {/* Fix #22: Cap at local availableCopies or 10, whichever is smaller */}
+                      {/* Fix #22: Cap at local availableCopies */}
                       <button
                         className="cart-qty-btn"
                         onClick={() => updateQuantity(book._id, (book.quantity || 1) + 1)}
-                        disabled={(book.quantity || 1) >= Math.min(book.availableCopies || 1, 10)}
+                        disabled={(book.quantity || 1) >= (book.availableCopies || 1)}
                         title="Increase"
                       >+</button>
                     </div>
