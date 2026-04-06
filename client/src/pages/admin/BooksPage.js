@@ -8,7 +8,7 @@ const CAT_ICONS = { Science:'⚗️', Technology:'💻', History:'📜', Literat
 
 const defaultForm = {
   title:'', author:'', isbn:'', category:'Science',
-  price:0, totalCopies:1, publisher:'', publishedYear:'',
+  price:0, totalCopies:1, availableCopies:1, publisher:'', publishedYear:'',
   description:'', coverImage:'', extraImages:[], language:'English', pages:''
 };
 
@@ -51,6 +51,7 @@ export default function BooksPage() {
     setForm({
       title:b.title, author:b.author, isbn:b.isbn,
       category:b.category, price:b.price||0, totalCopies:b.totalCopies,
+      availableCopies: b.availableCopies !== undefined ? b.availableCopies : b.totalCopies,
       publisher:b.publisher||'', publishedYear:b.publishedYear||'',
       description:b.description||'', coverImage:b.coverImage||'',
       extraImages:b.extraImages||[], language:b.language||'English', pages:b.pages||''
@@ -82,6 +83,8 @@ export default function BooksPage() {
     else if (!isValidISBN(form.isbn)) e.isbn = 'Invalid ISBN (min 10 digits)';
     if (!isPositiveNum(form.price)) e.price = 'Price must be a number';
     if (!form.totalCopies || form.totalCopies < 1) e.totalCopies = 'Min 1 copy required';
+    if (form.availableCopies < 0) e.availableCopies = 'Cannot be negative';
+    if (form.availableCopies > form.totalCopies) e.availableCopies = 'Cannot exceed total copies';
     if (form.publishedYear && (form.publishedYear < 1000 || form.publishedYear > new Date().getFullYear())) {
       e.publishedYear = `Year must be between 1000 and ${new Date().getFullYear()}`;
     }
@@ -337,6 +340,11 @@ export default function BooksPage() {
                     <label style={labelStyle}>Total Copies *</label>
                     <input style={inputStyle('totalCopies')} type="number" name="totalCopies" value={form.totalCopies} onChange={hc} min="1"/>
                     {errors.totalCopies && <div style={errorStyle}>⚠️ {errors.totalCopies}</div>}
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Available Copies *</label>
+                    <input style={inputStyle('availableCopies')} type="number" name="availableCopies" value={form.availableCopies} onChange={hc} min="0"/>
+                    {errors.availableCopies && <div style={errorStyle}>⚠️ {errors.availableCopies}</div>}
                   </div>
                   <div>
                     <label style={labelStyle}>Publisher</label>

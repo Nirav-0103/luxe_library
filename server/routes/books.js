@@ -113,7 +113,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, staffOnly, async (req, res) => {
   try {
     const book = new Book(req.body);
-    book.availableCopies = book.totalCopies;
+    book.availableCopies = req.body.availableCopies !== undefined ? req.body.availableCopies : book.totalCopies;
     await book.save();
     res.status(201).json({ success: true, data: book, message: 'Book added!' });
   } catch (err) {
