@@ -98,7 +98,19 @@ export default function CartPage() {
                         onClick={() => updateQuantity(book._id, (book.quantity || 1) - 1)}
                         title="Decrease"
                       >−</button>
-                      <span className="cart-qty-num">{book.quantity || 1}</span>
+                      <input 
+                        type="number" 
+                        style={{ width:40, textAlign:'center', background:'transparent', border:'none', color:'var(--text-primary)', outline:'none', fontWeight:600, appearance: 'none', MozAppearance: 'textfield' }}
+                        value={book.quantity || 1} 
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (!isNaN(val)) {
+                            if (val > (book.availableCopies || 1)) updateQuantity(book._id, book.availableCopies || 1);
+                            else if (val < 1) updateQuantity(book._id, 1);
+                            else updateQuantity(book._id, val);
+                          }
+                        }} 
+                      />
                       {/* Fix #22: Cap at local availableCopies */}
                       <button
                         className="cart-qty-btn"

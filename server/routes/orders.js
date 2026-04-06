@@ -57,7 +57,7 @@ async function recalculateTotal(items) {
     const book = await Book.findById(item.book);
     if (!book) throw new Error(`Book not found: ${item.book}`);
     const serverPrice = book.price || 0;
-    const qty = Math.max(1, Math.min(item.quantity || 1, 10)); // cap quantity 1-10
+    const qty = Math.max(1, Math.min(item.quantity || 1, book.availableCopies || 1)); // cap up to max available copies
     validatedItems.push({
       book: book._id,
       title: book.title,
