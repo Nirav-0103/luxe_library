@@ -243,7 +243,7 @@ export default function BookModal({ book: initialBook, onClose }) {
               </div>
               <div className="bmodal__detail">
                 <span className="bmodal__detail-label">Copies</span>
-                <span className="bmodal__detail-value">{book.availableCopies} / {book.totalCopies}</span>
+                <span className="bmodal__detail-value">{book.availableCopies}</span>
               </div>
             </div>
 

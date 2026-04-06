@@ -82,9 +82,7 @@ export default function BooksPage() {
     if (!form.isbn.trim()) e.isbn = 'ISBN is required';
     else if (!isValidISBN(form.isbn)) e.isbn = 'Invalid ISBN (min 10 digits)';
     if (!isPositiveNum(form.price)) e.price = 'Price must be a number';
-    if (!form.totalCopies || form.totalCopies < 1) e.totalCopies = 'Min 1 copy required';
     if (form.availableCopies < 0) e.availableCopies = 'Cannot be negative';
-    if (form.availableCopies > form.totalCopies) e.availableCopies = 'Cannot exceed total copies';
     if (form.publishedYear && (form.publishedYear < 1000 || form.publishedYear > new Date().getFullYear())) {
       e.publishedYear = `Year must be between 1000 and ${new Date().getFullYear()}`;
     }
@@ -191,7 +189,7 @@ export default function BooksPage() {
         : books.length === 0 ? <div className="ap-empty"><div className="ap-empty-icon">📚</div><p>No books found</p></div>
         : (
           <table className="ap-table">
-            <thead><tr><th>Cover</th><th>Title & Author</th><th>ISBN</th><th>Category</th><th>Price</th><th>Copies</th><th>Avail</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Cover</th><th>Title & Author</th><th>ISBN</th><th>Category</th><th>Price</th><th>Availability</th><th>Actions</th></tr></thead>
             <tbody>
               {books.map(b => (
                 <tr key={b._id}>
@@ -204,7 +202,6 @@ export default function BooksPage() {
                   <td style={{fontFamily:'monospace',fontSize:11}}>{b.isbn}</td>
                   <td><span className="ap-badge ap-badge--blue">{CAT_ICONS[b.category]} {b.category}</span></td>
                   <td><strong style={{color:'var(--gold)'}}>₹{b.price||0}</strong></td>
-                  <td>{b.totalCopies}</td>
                   <td><span className={`ap-badge ${b.availableCopies>0?'ap-badge--green':'ap-badge--red'}`}>{b.availableCopies}</span></td>
                   <td>
                     <div className="ap-actions">
@@ -335,11 +332,6 @@ export default function BooksPage() {
                     <label style={labelStyle}>💰 Price (₹) *</label>
                     <input style={inputStyle('price')} type="number" name="price" value={form.price} onChange={hc} min="0" placeholder="0"/>
                     {errors.price && <div style={errorStyle}>⚠️ {errors.price}</div>}
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Total Copies *</label>
-                    <input style={inputStyle('totalCopies')} type="number" name="totalCopies" value={form.totalCopies} onChange={hc} min="1"/>
-                    {errors.totalCopies && <div style={errorStyle}>⚠️ {errors.totalCopies}</div>}
                   </div>
                   <div>
                     <label style={labelStyle}>Available Copies *</label>

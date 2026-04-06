@@ -113,7 +113,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, staffOnly, async (req, res) => {
   try {
     const book = new Book(req.body);
-    book.availableCopies = req.body.availableCopies !== undefined ? req.body.availableCopies : book.totalCopies;
+    book.availableCopies = req.body.availableCopies !== undefined ? req.body.availableCopies : 1;
+    book.totalCopies = book.availableCopies; // Sync to satisfy schema 
     await book.save();
     res.status(201).json({ success: true, data: book, message: 'Book added!' });
   } catch (err) {
@@ -125,6 +126,7 @@ router.post('/', protect, staffOnly, async (req, res) => {
 // PUT update book (staff only)
 router.put('/:id', protect, staffOnly, async (req, res) => {
   try {
+    if (req.body.availableCopies !== undefined) req.body.totalCopies = req.body.availableCopies;
     const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!book) return res.status(404).json({ success: false, message: 'Book not found' });
     res.json({ success: true, data: book, message: 'Book updated!' });
