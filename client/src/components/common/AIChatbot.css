@@ -610,10 +610,12 @@
 /* ── Mobile ── */
 @media (max-width: 768px) {
     .ai-chat-window {
-        right: 10px;
-        left: 10px;
+        right: 12px;
+        left: 12px;
         width: auto;
-        bottom: 82px;
+        bottom: 76px;
+        max-height: min(480px, 75vh);
+        border-radius: 16px;
     }
 
     .ai-chat-btn {
@@ -632,6 +634,19 @@
 
     .ai-chat-btn__pulse {
         border-radius: 50%;
+    }
+
+    .ai-chat-messages {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ai-chat-window {
+        right: 8px;
+        left: 8px;
+        bottom: 72px;
+        max-height: min(440px, 72vh);
     }
 }
 

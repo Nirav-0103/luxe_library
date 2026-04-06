@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -18,12 +19,12 @@ export default function Header() {
   const [toggling, setToggling] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
+  const notifRef = useRef(null);
 
   useEffect(() => {
     if (!user) return;
 
     if (user?.role === 'admin') {
-      // Admin: preload pending placed orders
       getAdminOrdersAPI({ status: 'placed' })
         .then(res => {
           const placed = res.data.data || [];
@@ -32,7 +33,7 @@ export default function Header() {
             setNotifications(placed.map(o => ({
               id: o._id,
               text: `📦 Order ${o.orderNumber} — ${o.user?.name || 'Customer'} (₹${o.totalAmount})`,
-              isNew: !seenIds.includes(o._id), // Only new if not seen
+              isNew: !seenIds.includes(o._id),
               link: '/invoice/' + o._id,
             })));
           }
@@ -51,7 +52,6 @@ export default function Header() {
       });
       return () => socket.disconnect();
     } else {
-      // Regular user: load their own recent order status
       getMyOrdersAPI()
         .then(res => {
           const orders = (res.data.data || []).slice(0, 5);
@@ -62,8 +62,6 @@ export default function Header() {
                 placed: '⏳', confirmed: '✅', processing: '⚙️',
                 ready: '📦', completed: '🎉', cancelled: '❌', cancel_requested: '⚠️',
               }[o.orderStatus] || '📋';
-              // It's a new notification if it's in a notable status AND we haven't seen it in this status
-              // For robustness, combine order ID and status string to track if THIS status was seen
               const notifId = `${o._id}_${o.orderStatus}`;
               return {
                 id: notifId,
@@ -87,6 +85,27 @@ export default function Header() {
 
   useEffect(() => { setMenuOpen(false); }, [location]);
 
+  // Close notification panel when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotif(false);
+      }
+    };
+    if (showNotif) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNotif]);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   const handleLogout = () => { logout(); window.location.href = '/'; };
   const isHome = location.pathname === '/';
 
@@ -104,8 +123,12 @@ export default function Header() {
     return `header__link${location.pathname === path ? ' header__link--active' : ''}`;
   };
 
+  const newNotifCount = notifications.filter(n => n.isNew).length;
+
   return (
+    <>
     <header className={`header ${scrolled || !isHome ? 'header--solid' : ''}`}>
+
       <div className="header__inner container">
 
         <Link to="/" className="header__logo">
@@ -113,7 +136,8 @@ export default function Header() {
           <span className="header__logo-text">LUXE LIBRARY</span>
         </Link>
 
-        <nav className={`header__nav ${menuOpen ? 'header__nav--open' : ''}`}>
+        {/* ── DESKTOP NAV ── */}
+        <nav className="header__nav header__nav--desktop">
           <Link to="/" className={getClass('/')}>Home</Link>
           <Link to="/collection" className={getClass('/collection')}>Collection</Link>
           <Link to="/about" className={getClass('/about')}>About</Link>
@@ -126,25 +150,10 @@ export default function Header() {
               {user.role === 'admin' ? 'Admin Panel' : 'My Dashboard'}
             </Link>
           )}
-
-          {/* Theme Toggle - Mobile Only */}
-          <div className="header__mobile-only-theme">
-            <button
-              className={`theme-toggle ${isDark ? 'theme-toggle--dark' : 'theme-toggle--light'} ${toggling ? 'theme-toggle--spinning' : ''}`}
-              onClick={handleToggle}
-              aria-label="Toggle theme"
-            >
-              <span className="theme-toggle__track">
-                <span className="theme-toggle__thumb">
-                  <span className="theme-toggle__icon">{isDark ? '🌙' : '☀️'}</span>
-                </span>
-              </span>
-              <span className="theme-toggle__label">{isDark ? 'Dark Mode' : 'Light Mode'}</span>
-            </button>
-          </div>
         </nav>
 
-        <div className="header__auth">
+        {/* ── DESKTOP AUTH ── */}
+        <div className="header__auth header__auth--desktop">
           {/* Theme Toggle */}
           <button
             className={`theme-toggle ${isDark ? 'theme-toggle--dark' : 'theme-toggle--light'} ${toggling ? 'theme-toggle--spinning' : ''}`}
@@ -162,66 +171,63 @@ export default function Header() {
           {/* Cart Icon */}
           <Link to="/cart" className="header__cart" title="My Cart">
             <span className="header__cart-icon">🛒</span>
-            {count > 0 && (
-              <span className="header__cart-badge">{count}</span>
-            )}
+            {count > 0 && <span className="header__cart-badge">{count}</span>}
           </Link>
 
           {/* Notifications Bell */}
           {user && (
-            <div className="header__notif" title="Notifications" onClick={() => setShowNotif(!showNotif)} style={{ cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <div
+              className="header__notif"
+              ref={notifRef}
+              title="Notifications"
+              onClick={() => setShowNotif(!showNotif)}
+            >
               <span className="header__cart-icon" style={{ fontSize: '20px' }}>🔔</span>
-              {notifications.filter(n => n.isNew).length > 0 && (
-                <span className="header__cart-badge" style={{ background: '#e74c3c' }}>{notifications.filter(n => n.isNew).length}</span>
+              {newNotifCount > 0 && (
+                <span className="header__cart-badge" style={{ background: '#e74c3c' }}>{newNotifCount}</span>
               )}
               {showNotif && (
-                <div style={{
-                  position: 'absolute', top: '48px', right: '-10px',
-                  width: 'min(300px, calc(100vw - 30px))',
-                  background: 'var(--bg-card)', border: '1px solid var(--border-color)',
-                  borderRadius: '14px', padding: '16px',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.3)', zIndex: 200,
-                  display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'default'
-                }} onClick={e => e.stopPropagation()}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color2)', paddingBottom: '10px' }}>
-                    <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '14px', fontWeight: 600 }}>🔔 Notifications</h4>
+                <div className="notif-dropdown" onClick={e => e.stopPropagation()}>
+                  <div className="notif-dropdown__header">
+                    <h4>🔔 Notifications</h4>
                     {notifications.length > 0 && (
                       <button onClick={() => {
                         const seenIds = JSON.parse(localStorage.getItem('seen_notifs') || '[]');
                         const updatedIds = [...seenIds, ...notifications.map(n => n.id)];
                         localStorage.setItem('seen_notifs', JSON.stringify([...new Set(updatedIds)]));
                         setNotifications(prev => prev.map(x => ({ ...x, isNew: false })));
-                      }} style={{ background: 'transparent', border: 'none', color: 'var(--red)', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>Mark all read</button>
+                      }} className="notif-dropdown__mark-read">Mark all read</button>
                     )}
                   </div>
-                  {notifications.length === 0 ? (
-                    <span style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', padding: '16px 0' }}>✓ No new notifications</span>
-                  ) : (
-                    <>
-                      {notifications.map(n => (
-                        <div key={n.id} onClick={() => {
-                          const seenIds = JSON.parse(localStorage.getItem('seen_notifs') || '[]');
-                          if (!seenIds.includes(n.id)) {
-                            localStorage.setItem('seen_notifs', JSON.stringify([...seenIds, n.id]));
-                          }
-                          setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, isNew: false } : x));
-                          window.open(n.link || (user?.role === 'admin' ? '/admin/orders' : '/dashboard'), '_blank');
-                          setShowNotif(false);
-                        }} style={{
-                          background: n.isNew ? 'rgba(201,168,76,0.08)' : 'var(--bg-card2)',
-                          padding: '10px 12px', borderRadius: '8px', fontSize: '12px',
-                          color: 'var(--text-secondary)', border: `1px solid ${n.isNew ? 'rgba(201,168,76,0.3)' : 'var(--border-color2)'}`,
-                          cursor: 'pointer', lineHeight: 1.5
-                        }}>
-                          {n.isNew && <span style={{ color: 'var(--gold)', fontSize: '10px', fontWeight: 700, display: 'block', marginBottom: 2 }}>● NEW</span>}
-                          {n.text}
-                        </div>
-                      ))}
-                      <button onClick={() => { navigate(user?.role === 'admin' ? '/admin/orders' : '/dashboard'); setShowNotif(false); }} style={{ background: 'var(--gold)', border: 'none', borderRadius: '8px', padding: '8px', color: '#000', fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginTop: '4px' }}>
-                        {user?.role === 'admin' ? 'View All Orders →' : 'My Dashboard →'}
-                      </button>
-                    </>
-                  )}
+                  <div className="notif-dropdown__body">
+                    {notifications.length === 0 ? (
+                      <span className="notif-dropdown__empty">✓ No new notifications</span>
+                    ) : (
+                      <>
+                        {notifications.map(n => (
+                          <div key={n.id} className={`notif-dropdown__item${n.isNew ? ' notif-dropdown__item--new' : ''}`}
+                            onClick={() => {
+                              const seenIds = JSON.parse(localStorage.getItem('seen_notifs') || '[]');
+                              if (!seenIds.includes(n.id)) {
+                                localStorage.setItem('seen_notifs', JSON.stringify([...seenIds, n.id]));
+                              }
+                              setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, isNew: false } : x));
+                              window.open(n.link || (user?.role === 'admin' ? '/admin/orders' : '/dashboard'), '_blank');
+                              setShowNotif(false);
+                            }}>
+                            {n.isNew && <span className="notif-dropdown__new-badge">● NEW</span>}
+                            {n.text}
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => { navigate(user?.role === 'admin' ? '/admin/orders' : '/dashboard'); setShowNotif(false); }}
+                          className="notif-dropdown__view-all"
+                        >
+                          {user?.role === 'admin' ? 'View All Orders →' : 'My Dashboard →'}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -244,10 +250,156 @@ export default function Header() {
           )}
         </div>
 
-        <button className={`header__hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)}>
-          <span /><span /><span />
-        </button>
+        {/* ── MOBILE RIGHT AREA ── */}
+        <div className="header__mobile-right">
+          {!user ? (
+            <>
+              <Link to="/login" className="header__btn-ghost header__btn-ghost--mobile">Sign In</Link>
+              <Link to="/signup" className="header__btn-gold header__btn-gold--mobile">Join Now</Link>
+            </>
+          ) : (
+            <div className="header__mobile-notif-wrap" ref={notifRef}>
+              <button
+                className="header__mobile-notif-btn"
+                onClick={() => setShowNotif(!showNotif)}
+                aria-label="Notifications"
+              >
+                🔔
+                {newNotifCount > 0 && (
+                  <span className="header__cart-badge" style={{ background: '#e74c3c', position: 'absolute', top: '-4px', right: '-4px' }}>{newNotifCount}</span>
+                )}
+              </button>
+              {showNotif && (
+                <div className="notif-dropdown notif-dropdown--mobile" onClick={e => e.stopPropagation()}>
+                  <div className="notif-dropdown__header">
+                    <h4>🔔 Notifications</h4>
+                    {notifications.length > 0 && (
+                      <button onClick={() => {
+                        const seenIds = JSON.parse(localStorage.getItem('seen_notifs') || '[]');
+                        const updatedIds = [...seenIds, ...notifications.map(n => n.id)];
+                        localStorage.setItem('seen_notifs', JSON.stringify([...new Set(updatedIds)]));
+                        setNotifications(prev => prev.map(x => ({ ...x, isNew: false })));
+                      }} className="notif-dropdown__mark-read">Mark all read</button>
+                    )}
+                  </div>
+                  <div className="notif-dropdown__body">
+                    {notifications.length === 0 ? (
+                      <span className="notif-dropdown__empty">✓ No new notifications</span>
+                    ) : (
+                      <>
+                        {notifications.map(n => (
+                          <div key={n.id} className={`notif-dropdown__item${n.isNew ? ' notif-dropdown__item--new' : ''}`}
+                            onClick={() => {
+                              const seenIds = JSON.parse(localStorage.getItem('seen_notifs') || '[]');
+                              if (!seenIds.includes(n.id)) {
+                                localStorage.setItem('seen_notifs', JSON.stringify([...seenIds, n.id]));
+                              }
+                              setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, isNew: false } : x));
+                              navigate(n.link || (user?.role === 'admin' ? '/admin/orders' : '/dashboard'));
+                              setShowNotif(false);
+                            }}>
+                            {n.isNew && <span className="notif-dropdown__new-badge">● NEW</span>}
+                            {n.text}
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => { navigate(user?.role === 'admin' ? '/admin/orders' : '/dashboard'); setShowNotif(false); }}
+                          className="notif-dropdown__view-all"
+                        >
+                          {user?.role === 'admin' ? 'View All Orders →' : 'My Dashboard →'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Hamburger */}
+          <button
+            className={`header__hamburger ${menuOpen ? 'open' : ''}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span /><span /><span />
+          </button>
+        </div>
+
       </div>
     </header>
+
+    {ReactDOM.createPortal(
+      <>
+        {/* Dark overlay */}
+        <div
+          className={`header__overlay ${menuOpen ? 'header__overlay--visible' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        />
+
+        {/* Slide-in panel */}
+        <div className={`header__mobile-menu ${menuOpen ? 'header__mobile-menu--open' : ''}`}>
+          <button className="header__mobile-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
+
+          <div className="header__mobile-menu-logo">
+            <span className="header__logo-icon">✦</span>
+            <span className="header__logo-text">LUXE LIBRARY</span>
+          </div>
+
+          <nav className="header__mobile-nav">
+            <Link to="/" className={getClass('/')}>Home</Link>
+            <Link to="/collection" className={getClass('/collection')}>Collection</Link>
+            <Link to="/about" className={getClass('/about')}>About</Link>
+            <Link to="/contact" className={getClass('/contact')}>Contact</Link>
+
+            {user && (
+              <Link
+                to={user.role === 'admin' ? '/admin' : '/dashboard'}
+                className={`header__link${location.pathname.startsWith('/admin') || location.pathname === '/dashboard' ? ' header__link--active' : ''}`}
+              >
+                {user.role === 'admin' ? 'Admin Panel' : 'My Dashboard'}
+              </Link>
+            )}
+
+            <Link to="/cart" className="header__mobile-cart-link">
+              🛒 My Cart{count > 0 && <span className="header__mobile-cart-count">{count}</span>}
+            </Link>
+
+            <div className="header__mobile-divider" />
+
+            <button
+              className={`theme-toggle theme-toggle--mobile ${isDark ? 'theme-toggle--dark' : 'theme-toggle--light'} ${toggling ? 'theme-toggle--spinning' : ''}`}
+              onClick={handleToggle}
+              aria-label="Toggle theme"
+            >
+              <span className="theme-toggle__track">
+                <span className="theme-toggle__thumb">
+                  <span className="theme-toggle__icon">{isDark ? '🌙' : '☀️'}</span>
+                </span>
+              </span>
+              <span className="theme-toggle__label">{isDark ? 'Dark Mode' : 'Light Mode'}</span>
+            </button>
+
+            {user ? (
+              <div className="header__mobile-user">
+                <div className="header__avatar header__avatar--lg">{user.name.charAt(0).toUpperCase()}</div>
+                <div>
+                  <div className="header__user-name">{user.name}</div>
+                  <div className="header__user-role">{user.role}</div>
+                </div>
+                <button className="header__mobile-logout" onClick={handleLogout}>Sign Out</button>
+              </div>
+            ) : (
+              <div className="header__mobile-auth-btns">
+                <Link to="/login" className="header__btn-ghost header__btn-ghost--full">Sign In</Link>
+                <Link to="/signup" className="header__btn-gold header__btn-gold--full">Join Now</Link>
+              </div>
+            )}
+          </nav>
+        </div>
+      </>,
+      document.body
+    )}
+  </>
   );
 }

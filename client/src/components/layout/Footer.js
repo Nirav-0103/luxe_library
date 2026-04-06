@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { subscribeNewsletterAPI } from '../../api';
+import { useAuth } from '../../context/AuthContext';
 import './Footer.css';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -68,10 +70,10 @@ export default function Footer() {
           <div className="footer__col">
             <h4 className="footer__col-title">Account</h4>
             <ul className="footer__links">
-              <li><Link to="/login">Sign In</Link></li>
-              <li><Link to="/signup">Register</Link></li>
-              <li><Link to="/dashboard">My Dashboard</Link></li>
-              <li><Link to="/admin">Admin Panel</Link></li>
+              {!user && <li><Link to="/login">Sign In</Link></li>}
+              {!user && <li><Link to="/signup">Register</Link></li>}
+              {user && <li><Link to="/dashboard">My Dashboard</Link></li>}
+              {user?.role === 'admin' && <li><Link to="/admin">Admin Panel</Link></li>}
             </ul>
           </div>
 

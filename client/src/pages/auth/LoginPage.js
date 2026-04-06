@@ -121,19 +121,7 @@ export default function LoginPage() {
             )}
           </form>
 
-          <div className="auth__divider"><span>or</span></div>
 
-          <div className="auth__demo">
-            <p className="auth__demo-title">Quick Login</p>
-            <div className="auth__demo-cards">
-              <button className="auth__demo-card"
-                onClick={() => handleQuickLogin('niravahir448@gmail.com', 'Nirav1234')}>
-                <span className="auth__demo-icon">🛡️</span>
-                <span className="auth__demo-label">Admin</span>
-                <span className="auth__demo-email">niravahir448@gmail.com</span>
-              </button>
-            </div>
-          </div>
 
           <p className="auth__switch">
             Don't have an account?{' '}
