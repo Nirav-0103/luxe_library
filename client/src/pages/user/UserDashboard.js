@@ -21,6 +21,23 @@ const COMPLAINT_STATUS_COLOR = {
   open:'#5a9ce0', in_progress:'#c9a84c', resolved:'#5acea0', closed:'#888'
 };
 
+function BookCoverImage({ book }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!book.coverImage || failed) {
+    return <span className="udash__book-emoji">📖</span>;
+  }
+
+  return (
+    <img
+      src={book.coverImage}
+      alt={book.title}
+      style={{width:'100%', height:'100%', objectFit:'cover', display:'block'}}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export default function UserDashboard() {
   const { user, updateUser, wishlist } = useAuth();
   const [books, setBooks] = useState([]);
@@ -192,15 +209,7 @@ export default function UserDashboard() {
                 : books.map(book => (
                   <div key={book._id} className="udash__book-card" onClick={() => setSelectedBook(book)}>
                     <div className="udash__book-cover">
-                      {book.coverImage
-                        ? <img
-                            src={book.coverImage}
-                            alt={book.title}
-                            style={{width:'100%', height:'100%', objectFit:'cover', display:'block'}}
-                            onError={e => { e.target.style.display='none'; e.target.parentNode.innerHTML = '<span style="font-size:40px">📖</span>'; }}
-                          />
-                        : <span className="udash__book-emoji">📖</span>
-                      }
+                      <BookCoverImage book={book} />
                       <div className="udash__book-overlay">View Details →</div>
                     </div>
                     <div className="udash__book-info">
@@ -545,15 +554,7 @@ export default function UserDashboard() {
                 : wishlist.map(book => (
                   <div key={book._id} className="udash__book-card" onClick={() => setSelectedBook(book)}>
                     <div className="udash__book-cover">
-                      {book.coverImage
-                        ? <img
-                            src={book.coverImage}
-                            alt={book.title}
-                            style={{width:'100%', height:'100%', objectFit:'cover', display:'block'}}
-                            onError={e => { e.target.style.display='none'; e.target.parentNode.innerHTML = '<span style="font-size:40px">📖</span>'; }}
-                          />
-                        : <span className="udash__book-emoji">📖</span>
-                      }
+                      <BookCoverImage book={book} />
                       <div className="udash__book-overlay">View Details →</div>
                     </div>
                     <div className="udash__book-info">

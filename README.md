@@ -33,7 +33,7 @@ npm start
 ### 4. Access
 - Frontend: http://localhost:3000
 - Admin Panel: http://localhost:3000/admin
-- API: http://localhost:5000/api
+- API: http://localhost:8080/api
 
 ## 🔑 Default Admin
 - Email: admin@library.com
@@ -42,13 +42,13 @@ npm start
 ## ⚙️ Environment Variables (server/.env)
 ```
 MONGO_URI=mongodb://127.0.0.1:27017/library_luxury_db
-PORT=5000
+PORT=8080
 JWT_SECRET=library_super_secret_jwt_key_2024
 JWT_EXPIRE=7d
 EMAIL_USER=your.gmail@gmail.com
 EMAIL_PASS=your_gmail_app_password
 ADMIN_EMAIL=your.gmail@gmail.com
-CLIENT_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 RAZORPAY_KEY_ID=rzp_test_xxxxx
 RAZORPAY_KEY_SECRET=your_secret
 ```

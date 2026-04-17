@@ -24,8 +24,6 @@ What would you like to know?`;
 export default function AIChatbot() {
   const location = useLocation();
   const [open, setOpen]       = useState(false);
-  
-  if (location.pathname.startsWith('/invoice')) return null;
   const [input, setInput]     = useState('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([
@@ -102,15 +100,24 @@ export default function AIChatbot() {
 
   const fmt = (d) => new Date(d).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
-  // Render markdown-lite: **bold**, bullet lines, newlines
+  const renderInlineMarkdown = (line) =>
+    line.split(/(\*\*.*?\*\*)/g).map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i}>{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+
+  // Render markdown-lite safely: **bold**, bullet lines, newlines.
   const renderContent = (text) =>
     text.split('\n').map((line, i) => {
-      const html = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       if (line.startsWith('• '))
-        return <div key={i} className="ai-bullet" dangerouslySetInnerHTML={{ __html: html }} />;
+        return <div key={i} className="ai-bullet">{renderInlineMarkdown(line)}</div>;
       if (line === '') return <br key={i} />;
-      return <span key={i} dangerouslySetInnerHTML={{ __html: html }} />;
+      return <span key={i}>{renderInlineMarkdown(line)}</span>;
     });
+
+  if (location.pathname.startsWith('/invoice')) return null;
 
   return (
     <>

@@ -28,6 +28,7 @@
   justify-content: space-between;
   flex-wrap: nowrap;
   position: relative;
+  gap: 20px;
 }
 
 /* ── Logo ── */
@@ -75,7 +76,6 @@
   flex-direction: row;
   align-items: center;
   gap: 28px;
-  flex: 1;
   justify-content: center;
   flex-wrap: nowrap;
 }
