@@ -19,8 +19,9 @@ const orderSchema = new mongoose.Schema({
   discountApplied: { type: Number, default: 0 }, // Audit: discount amount
   pointsEarned: { type: Number, default: 0 },
   pointsUsed: { type: Number, default: 0 },
-  paymentMethod: { type: String, enum: ['cod', 'razorpay'], required: true },
+  paymentMethod: { type: String, enum: ['cod', 'razorpay', 'qr'], required: true },
   paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded', 'refund_pending'], default: 'pending' },
+  upiTransactionId:  { type: String },
   razorpayOrderId:   { type: String },
   razorpayPaymentId: { type: String },
   refundId:          { type: String },

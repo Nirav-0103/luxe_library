@@ -20,6 +20,9 @@ export default function CheckoutPage() {
   
   // Phase 2: Luxe Points
   const [pointsToUse, setPointsToUse] = useState(0);
+  
+  // Phase 7: Direct QR Payment
+  const [upiTransactionId, setUpiTransactionId] = useState('');
 
   const [address, setAddress] = useState({
     fullName: user?.name || '',
@@ -126,6 +129,39 @@ export default function CheckoutPage() {
     }
   };
 
+  // ── QR code flow ──────────────────────────────────────────────────────────
+  const handleQR = async () => {
+    if (!upiTransactionId || upiTransactionId.trim().length < 8) {
+      toast.error('Please enter a valid Transaction ID or UTR number (min 8 chars)');
+      return;
+    }
+    setProcessing(true);
+    try {
+      const orderItems = items.map(b => ({
+        book: b._id, title: b.title, author: b.author,
+        coverImage: b.coverImage || '', price: Number(b.price) || 0, quantity: b.quantity || 1,
+      }));
+      const res = await createOrderAPI({
+        items: orderItems,
+        totalAmount: grandTotal,
+        paymentMethod: 'qr',
+        deliveryAddress: address,
+        pointsToUse: pointsDiscount,
+        upiTransactionId: upiTransactionId.trim()
+      });
+      await trySaveAddress();
+      clearCart();
+      setPlacedOrder(res.data.data);
+      setStep(3);
+      window.scrollTo(0, 0);
+      toast.success('Order placed successfully! Admin will verify payment shortly. 🎉');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Order failed. Try again.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   // ── Razorpay flow ─────────────────────────────────────────────────────────
   // Fix #2: Order is created ONLY after successful payment verification
   // No more orphan orders or inventory deductions before payment succeeds
@@ -216,6 +252,8 @@ export default function CheckoutPage() {
     e.preventDefault();
     if (payMethod === 'cod') {
       handleCOD();
+    } else if (payMethod === 'qr') {
+      handleQR();
     } else {
       handleRazorpay();
     }
@@ -363,7 +401,8 @@ export default function CheckoutPage() {
 
                   <div className="pay-tabs">
                     {[
-                      { id: 'razorpay', icon: '⚡', label: 'Pay Online', sub: 'Card / UPI / Netbanking' },
+                      { id: 'razorpay', icon: '⚡', label: 'Pay Online', sub: 'Card / Netbanking via Razorpay' },
+                      { id: 'qr', icon: '📱', label: 'Scan QR & Pay', sub: 'Direct UPI Payment' },
                       { id: 'cod', icon: '🏛️', label: 'Pay at Library', sub: 'Cash on Delivery / Visit' },
                     ].map(m => (
                       <button key={m.id} className={`pay-tab ${payMethod === m.id ? 'active' : ''}`} onClick={() => setPayMethod(m.id)} type="button">
@@ -410,6 +449,40 @@ export default function CheckoutPage() {
                       </div>
                     )}
 
+                    {payMethod === 'qr' && (
+                      <div style={{ textAlign: 'center', padding: '24px 20px', background: 'var(--bg-card2)', borderRadius: 12, border: '1px solid var(--border-color2)', marginTop: 16 }}>
+                        <h3 style={{ fontFamily: 'Cormorant Garamond,serif', fontSize: 22, color: 'var(--gold)', marginBottom: 12 }}>Scan to Pay</h3>
+                        <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
+                          Open GPay, PhonePe, or Paytm and scan the QR code to pay <strong style={{color:'#fff', fontSize:16}}>₹{grandTotal}</strong>.
+                        </p>
+                        
+                        <div style={{ background: '#fff', padding: 16, display: 'inline-block', borderRadius: 12, marginBottom: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                          {/* Image placed directly from public folder or placeholder */}
+                          <img src="/images/payment-qr.jpg" alt="Luxe Library UPI QR" style={{ width: 220, height: 220, objectFit: 'contain' }} 
+                            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                          <div style={{ display: 'none', width: 220, height: 220, background: '#f5f5f5', color: '#888', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 10, borderRadius: 8 }}>
+                            <span style={{fontSize:32}}>📷</span>
+                            <span style={{fontSize:12, fontWeight: 500}}>QR Code not found.</span>
+                            <span style={{fontSize:10}}>Place 'payment-qr.jpg' in public/images</span>
+                          </div>
+                        </div>
+
+                        <div className="chk-form-group" style={{ textAlign: 'left' }}>
+                          <label>Transaction ID / UTR Number *</label>
+                          <input 
+                            value={upiTransactionId} 
+                            onChange={e => setUpiTransactionId(e.target.value)} 
+                            placeholder="Enter 12-digit UTR or Transaction ID" 
+                            required={payMethod === 'qr'} 
+                            style={{ background: 'var(--dark)', borderColor: 'var(--border-color2)'}} 
+                          />
+                          <span style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, display: 'inline-block' }}>
+                            We need this to manually verify your payment if you paid via direct QR.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="chk-secure">🔒 100% Secure — SSL Encrypted</div>
 
                     <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
@@ -440,8 +513,11 @@ export default function CheckoutPage() {
                 <div className="chk-success__row"><span>Order No.</span><strong style={{ color: 'var(--gold)' }}>{placedOrder.orderNumber}</strong></div>
                 <div className="chk-success__row"><span>Member</span><strong>{address.fullName}</strong></div>
                 <div className="chk-success__row"><span>Amount</span><strong>₹{placedOrder?.totalAmount ?? grandTotal}</strong></div>
-                <div className="chk-success__row"><span>Payment</span><strong style={{ textTransform: 'capitalize' }}>{payMethod}</strong></div>
-                <div className="chk-success__row"><span>Status</span><strong style={{ color: 'var(--gold)' }}>⏳ Placed — Awaiting Confirmation</strong></div>
+                <div className="chk-success__row"><span>Payment</span><strong style={{ textTransform: 'capitalize' }}>{payMethod === 'qr' ? 'Direct UPI' : payMethod}</strong></div>
+                <div className="chk-success__row"><span>Status</span><strong style={{ color: 'var(--gold)' }}>{payMethod === 'qr' ? '⏳ Verifying Payment' : '⏳ Placed — Awaiting Confirmation'}</strong></div>
+                {payMethod === 'qr' && upiTransactionId && (
+                  <div className="chk-success__row"><span>UTR / Ref</span><strong style={{ fontSize: 12, fontFamily: 'monospace' }}>{upiTransactionId}</strong></div>
+                )}
               </div>
               <div className="chk-success__actions">
                 <Link to="/dashboard" className="chk-btn-primary">View My Orders</Link>

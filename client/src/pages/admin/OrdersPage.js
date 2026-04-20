@@ -294,7 +294,7 @@ export default function OrdersPage() {
               ))}
             </div>
 
-            {/* Address */}
+            {/* Delivery Address */}
             {selectedOrder.deliveryAddress?.street && (
               <div style={{background:'var(--bg-card2)',borderRadius:8,padding:'14px 16px',marginBottom:16}}>
                 <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--text-muted)',marginBottom:8}}>Delivery Address</div>
@@ -306,6 +306,25 @@ export default function OrdersPage() {
                 </div>
               </div>
             )}
+
+            {/* Payment Details */}
+            <div style={{background:'var(--bg-card2)',borderRadius:8,padding:'14px 16px',marginBottom:16}}>
+              <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--text-muted)',marginBottom:8}}>Payment Details</div>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+                <span style={{fontSize:13,color:'var(--text-secondary)'}}>Method</span>
+                <span style={{fontSize:13,color:'var(--text-primary)',textTransform:'capitalize',fontWeight:500}}>{selectedOrder.paymentMethod === 'qr' ? 'Direct UPI (QR)' : selectedOrder.paymentMethod}</span>
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+                  <span style={{fontSize:13,color:'var(--text-secondary)'}}>Status</span>
+                  <span className={`ap-badge ${selectedOrder.paymentStatus==='paid'?'ap-badge--green':'ap-badge--red'}`} style={{fontSize:10}}>{selectedOrder.paymentStatus}</span>
+              </div>
+              {selectedOrder.upiTransactionId && (
+                <div style={{display:'flex',justifyContent:'space-between',marginTop:6,paddingTop:6,borderTop:'1px solid var(--border-color)'}}>
+                  <span style={{fontSize:13,color:'var(--text-secondary)'}}>UTR / Trans ID</span>
+                  <span style={{fontSize:12,color:'var(--text-primary)',fontFamily:'monospace',fontWeight:600}}>{selectedOrder.upiTransactionId}</span>
+                </div>
+              )}
+            </div>
 
             {/* Summary */}
             <div style={{display:'flex',justifyContent:'space-between',padding:'12px 0',borderTop:'1px solid var(--border-color)',marginBottom:20}}>

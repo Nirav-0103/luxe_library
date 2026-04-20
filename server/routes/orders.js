@@ -71,9 +71,7 @@ async function recalculateTotal(items) {
   return { validatedItems, total };
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// ADMIN routes FIRST (Fix #5: Specific routes before /:id param route)
-// ══════════════════════════════════════════════════════════════════════════════
+
 
 // ── ADMIN: Get All Orders ──
 router.get('/admin/all', protect, adminOnly, async (req, res) => {
@@ -214,7 +212,17 @@ router.put('/admin/:id/status', protect, adminOnly, async (req, res) => {
     order.orderStatus = status;
     if (adminNote) order.adminNote = adminNote;
 
-    if (status === 'confirmed') order.confirmedAt = new Date();
+    if (status === 'confirmed') {
+      order.confirmedAt = new Date();
+      // Auto-mark QR payments as paid when admin confirms the order
+      if (order.paymentMethod === 'qr' && order.paymentStatus === 'pending') {
+        order.paymentStatus = 'paid';
+        if (order.pointsEarned > 0) {
+          const User = require('../models/User');
+          await User.findByIdAndUpdate(order.user, { $inc: { luxePoints: order.pointsEarned } });
+        }
+      }
+    }
     if (status === 'completed') {
       order.completedAt = new Date();
       // Auto-mark payment as paid when order is completed for COD
@@ -251,7 +259,7 @@ router.put('/admin/:id/status', protect, adminOnly, async (req, res) => {
 // ── USER: Create Order ──
 router.post('/', protect, async (req, res) => {
   try {
-    const { items, paymentMethod, deliveryAddress, pointsToUse = 0 } = req.body;
+    const { items, paymentMethod, deliveryAddress, pointsToUse = 0, upiTransactionId } = req.body;
     if (!items || items.length === 0) return res.status(400).json({ success: false, message: 'No items in order' });
 
     // Fix #7/#8: Recalculate total from actual DB prices — ignore client totalAmount
@@ -293,6 +301,7 @@ router.post('/', protect, async (req, res) => {
       pointsEarned,
       paymentMethod,
       paymentStatus: 'pending',
+      upiTransactionId,
       deliveryAddress,
     });
 
